@@ -1,0 +1,50 @@
+services:
+  # ---------- Database ----------
+  auth-database:
+    image: postgres:16-alpine
+    container_name: auth-database
+    networks:
+      - pasarly_net
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASS}
+      - POSTGRES_DB=${DATABASE_NAME}
+    volumes:
+      - auth_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
+      interval: 5s
+      retries: 5
+
+  # ---------- Migration ----------
+  auth-migrate:
+    image: pasarly-auth-migrate
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth-migrate
+    networks:
+      - pasarly_net
+    restart: "no"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=auth-database
+    depends_on:
+      auth-database:
+        condition: service_healthy
+    entrypoint: ["./bin/migrate"]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "auth-database"]
+      interval: 10s
+      retries: 3
+
+networks:
+  pasarly_net:
+    driver: bridge
+
+volumes:
+  auth_pg_data:

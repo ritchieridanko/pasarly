@@ -1,0 +1,8 @@
+.env
+
+# Binaries
+/auth-service/cmd/migrate/migrate
+
+# Go build cache
+/bin/
+*.out
