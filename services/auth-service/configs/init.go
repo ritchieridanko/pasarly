@@ -16,6 +16,7 @@ type Config struct {
 
 type App struct {
 	Name string `mapstructure:"name"`
+	Env  string
 }
 
 type Database struct {
@@ -58,7 +59,8 @@ func Init(path string) (*Config, error) {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
-	cfg.DSN = fmt.Sprintf(
+	cfg.App.Env = env
+	cfg.Database.DSN = fmt.Sprintf(
 		"postgresql://%s:%s@%s:%d/%s?sslmode=%s",
 		cfg.Database.User,
 		cfg.Database.Pass,

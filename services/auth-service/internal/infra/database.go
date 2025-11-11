@@ -3,7 +3,6 @@ package infra
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -14,7 +13,7 @@ type Database struct {
 	database *pgxpool.Pool
 }
 
-func NewDatabase(cfg *configs.Database) (*Database, error) {
+func NewDatabase(cfg *configs.Database, l *Logger) (*Database, error) {
 	poolCfg, err := pgxpool.ParseConfig(cfg.DSN)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build pgxpool config: %w", err)
@@ -37,7 +36,7 @@ func NewDatabase(cfg *configs.Database) (*Database, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	log.Printf("✅ [database] connected to %s:%d/%s", cfg.Host, cfg.Port, cfg.Name)
+	l.Sugar().Infof("✅ [DATABASE] initialized (host=%s, port=%d, name=%s)", cfg.Host, cfg.Port, cfg.Name)
 	return &Database{database: db}, nil
 }
 
