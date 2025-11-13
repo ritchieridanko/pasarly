@@ -4,7 +4,7 @@ services:
     image: pasarly-auth-service
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.app
     container_name: ${SERVER_GRPC_HOST}
     networks:
       - pasarly-net
@@ -43,7 +43,7 @@ services:
     image: pasarly-auth-migrator
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.migrator
     container_name: auth-migrator
     networks:
       - pasarly-net
