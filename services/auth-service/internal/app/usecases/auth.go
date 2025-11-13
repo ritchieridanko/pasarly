@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/ritchieridanko/pasarly/auth-service/internal/app/models"
@@ -9,6 +10,7 @@ import (
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/database"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/logger"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/service/bcrypt"
+	"github.com/ritchieridanko/pasarly/auth-service/internal/service/validator"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/ce"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/constants"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/utils"
@@ -26,6 +28,7 @@ type authUsecase struct {
 	tr         repositories.TokenRepository
 	transactor *database.Transactor
 	bcrypt     *bcrypt.BCrypt
+	validator  *validator.Validator
 	logger     *logger.Logger
 }
 
@@ -34,14 +37,21 @@ func NewAuthUsecase(
 	tr repositories.TokenRepository,
 	tx *database.Transactor,
 	b *bcrypt.BCrypt,
+	v *validator.Validator,
 	l *logger.Logger,
 ) AuthUsecase {
-	return &authUsecase{ar: ar, tr: tr, transactor: tx, bcrypt: b, logger: l}
+	return &authUsecase{ar: ar, tr: tr, transactor: tx, bcrypt: b, validator: v, logger: l}
 }
 
 func (u *authUsecase) SignUp(ctx context.Context, data *models.CreateAuth) (*models.Auth, *ce.Error) {
 	ctx, span := otel.Tracer(authErrTracer).Start(ctx, "SignUp")
 	defer span.End()
+
+	// Validations
+	if ok, why := u.validator.Password(data.Password); !ok {
+		err := fmt.Errorf("failed to sign up: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
 
 	var auth *models.Auth
 	err := u.transactor.WithTx(ctx, func(ctx context.Context) *ce.Error {

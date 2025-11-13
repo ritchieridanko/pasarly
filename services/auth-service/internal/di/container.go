@@ -49,7 +49,7 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 	s := service.Init(cfg)
 
 	// Usecases
-	au := usecases.NewAuthUsecase(ar, tr, tx, s.BCrypt(), l)
+	au := usecases.NewAuthUsecase(ar, tr, tx, s.BCrypt(), s.Validator(), l)
 	su := usecases.NewSessionUsecase(&cfg.Auth, sr, tx, s.JWT())
 
 	// Handlers
