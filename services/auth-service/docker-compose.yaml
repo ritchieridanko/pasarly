@@ -1,10 +1,29 @@
 services:
+  # ---------- Application ----------
+  auth-service:
+    image: pasarly-auth-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${SERVER_GRPC_HOST}
+    networks:
+      - pasarly-net
+    restart: unless-stopped
+    env_file:
+      - .env
+      - ../.env
+    depends_on:
+      auth-database:
+        condition: service_healthy
+      auth-migrator:
+        condition: service_completed_successfully
+
   # ---------- Database ----------
   auth-database:
     image: postgres:16-alpine
-    container_name: auth-database
+    container_name: ${DATABASE_HOST}
     networks:
-      - pasarly_net
+      - pasarly-net
     restart: unless-stopped
     env_file:
       - .env
@@ -13,38 +32,36 @@ services:
       - POSTGRES_PASSWORD=${DATABASE_PASS}
       - POSTGRES_DB=${DATABASE_NAME}
     volumes:
-      - auth_pg_data:/var/lib/postgresql/data
+      - auth-db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
       interval: 5s
       retries: 5
 
-  # ---------- Migration ----------
-  auth-migrate:
-    image: pasarly-auth-migrate
+  # ---------- Migrator ----------
+  auth-migrator:
+    image: pasarly-auth-migrator
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: auth-migrate
+    container_name: auth-migrator
     networks:
-      - pasarly_net
+      - pasarly-net
     restart: "no"
     env_file:
       - .env
-    environment:
-      - DATABASE_HOST=auth-database
     depends_on:
       auth-database:
         condition: service_healthy
-    entrypoint: ["./bin/migrate"]
+    entrypoint: ["./bin/migrator"]
     healthcheck:
-      test: ["CMD", "pg_isready", "-h", "auth-database"]
+      test: ["CMD", "pg_isready", "-h", "${DATABASE_HOST}"]
       interval: 10s
       retries: 3
 
 networks:
-  pasarly_net:
-    driver: bridge
+  pasarly-net:
+    external: true
 
 volumes:
-  auth_pg_data:
+  auth-db-data:

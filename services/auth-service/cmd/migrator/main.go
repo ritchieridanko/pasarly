@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/ritchieridanko/pasarly/auth-service/configs"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra"
+	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/database"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 		log.Fatalln("FATAL ->", err.Error())
 	}
 
-	m, err := infra.NewMigrator(&cfg.Database, "./migrations")
+	m, err := database.NewMigrator(&cfg.Database, "./migrations")
 	if err != nil {
 		log.Fatalln("FATAL ->", err.Error())
 	}

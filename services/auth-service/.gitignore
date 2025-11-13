@@ -1,7 +1,8 @@
 .env
 
 # Binaries
-/auth-service/cmd/migrate/migrate
+/auth-service/cmd/app/app
+/auth-service/cmd/migrator/migrator
 
 # Go build cache
 /bin/

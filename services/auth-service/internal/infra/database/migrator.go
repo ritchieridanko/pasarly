@@ -1,4 +1,4 @@
-package infra
+package database
 
 import (
 	"database/sql"
@@ -12,7 +12,7 @@ import (
 )
 
 type Migrator struct {
-	migrator *migrate.Migrate
+	migrate *migrate.Migrate
 }
 
 func NewMigrator(cfg *configs.Database, path string) (*Migrator, error) {
@@ -31,11 +31,11 @@ func NewMigrator(cfg *configs.Database, path string) (*Migrator, error) {
 		return nil, fmt.Errorf("failed to create migrator: %w", err)
 	}
 
-	return &Migrator{migrator: m}, nil
+	return &Migrator{migrate: m}, nil
 }
 
 func (m *Migrator) Up() error {
-	if err := m.migrator.Up(); err != nil && err != migrate.ErrNoChange {
+	if err := m.migrate.Up(); err != nil && err != migrate.ErrNoChange {
 		return fmt.Errorf("failed to apply migrations: %w", err)
 	}
 	return nil
@@ -44,9 +44,9 @@ func (m *Migrator) Up() error {
 func (m *Migrator) Down(steps int) error {
 	var err error
 	if steps == 0 {
-		err = m.migrator.Down()
+		err = m.migrate.Down()
 	} else {
-		err = m.migrator.Steps(-steps)
+		err = m.migrate.Steps(-steps)
 	}
 
 	if err != nil && err != migrate.ErrNoChange {
@@ -57,12 +57,12 @@ func (m *Migrator) Down(steps int) error {
 }
 
 func (m *Migrator) Close() error {
-	sErr, dbErr := m.migrator.Close()
-	if sErr != nil {
-		return fmt.Errorf("failed to close migration source: %w", sErr)
+	errS, errDB := m.migrate.Close()
+	if errS != nil {
+		return fmt.Errorf("failed to close migration source: %w", errS)
 	}
-	if dbErr != nil {
-		return fmt.Errorf("failed to close migration database: %w", dbErr)
+	if errDB != nil {
+		return fmt.Errorf("failed to close migration database: %w", errDB)
 	}
 	return nil
 }

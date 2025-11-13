@@ -11,12 +11,47 @@ import (
 
 type Config struct {
 	App      `mapstructure:"app"`
+	Auth     `mapstructure:"auth"`
+	Server   `mapstructure:"server"`
 	Database `mapstructure:"database"`
+	Cache    `mapstructure:"cache"`
 }
 
 type App struct {
 	Name string `mapstructure:"name"`
 	Env  string
+}
+
+type Auth struct {
+	BCrypt struct {
+		Cost int `mapstructure:"cost"`
+	} `mapstructure:"bcrypt"`
+
+	JWT struct {
+		Issuer   string        `mapstructure:"issuer"`
+		Secret   string        `mapstructure:"secret"`
+		Duration time.Duration `mapstructure:"duration"`
+	} `mapstructure:"jwt"`
+
+	Token struct {
+		Duration struct {
+			Session      time.Duration `mapstructure:"session"`
+			Verification time.Duration `mapstructure:"verification"`
+		} `mapstructure:"duration"`
+	} `mapstructure:"token"`
+}
+
+type Server struct {
+	GRPC struct {
+		Host string `mapstructure:"host"`
+		Port int    `mapstructure:"port"`
+	} `mapstructure:"grpc"`
+
+	Timeout struct {
+		Read     time.Duration `mapstructure:"read"`
+		Write    time.Duration `mapstructure:"write"`
+		Shutdown time.Duration `mapstructure:"shutdown"`
+	} `mapstructure:"timeout"`
 }
 
 type Database struct {
@@ -31,6 +66,14 @@ type Database struct {
 	MaxConnLifetime time.Duration `mapstructure:"max_conn_lifetime"`
 	MaxConnIdleTime time.Duration `mapstructure:"max_conn_idle_time"`
 	DSN             string
+}
+
+type Cache struct {
+	Host       string `mapstructure:"host"`
+	Port       int    `mapstructure:"port"`
+	Pass       string `mapstructure:"pass"`
+	MaxRetries int    `mapstructure:"max_retries"`
+	BaseDelay  int    `mapstructure:"base_delay"`
 }
 
 func Init(path string) (*Config, error) {
