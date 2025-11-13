@@ -48,6 +48,10 @@ func (u *authUsecase) SignUp(ctx context.Context, data *models.CreateAuth) (*mod
 	defer span.End()
 
 	// Validations
+	if ok, why := u.validator.Email(&data.Email); !ok {
+		err := fmt.Errorf("failed to sign up: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
 	if ok, why := u.validator.Password(data.Password); !ok {
 		err := fmt.Errorf("failed to sign up: %w", errors.New(why))
 		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)

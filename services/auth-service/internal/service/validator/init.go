@@ -1,11 +1,30 @@
 package validator
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Validator struct{}
 
 func Init() *Validator {
 	return &Validator{}
+}
+
+func (v *Validator) Email(value *string) (bool, string) {
+	if value == nil {
+		return false, "Email is not provided"
+	}
+
+	val := strings.TrimSpace(*value)
+	if val == "" {
+		return false, "Email is empty"
+	}
+	if !rgxEmail.MatchString(val) {
+		return false, "Email is not valid"
+	}
+
+	return true, ""
 }
 
 func (v *Validator) Password(value *string) (bool, string) {

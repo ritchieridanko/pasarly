@@ -9,8 +9,9 @@ const (
 )
 
 var (
+	rgxEmail        = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	rgxLowercase    = regexp.MustCompile(`[a-z]`)
-	rgxUppercase    = regexp.MustCompile(`[A-Z]`)
 	rgxNumber       = regexp.MustCompile(`[0-9]`)
 	rgxSpecialChars = regexp.MustCompile(`[!@#$%^&*(),.?":{}|<>]`)
+	rgxUppercase    = regexp.MustCompile(`[A-Z]`)
 )
