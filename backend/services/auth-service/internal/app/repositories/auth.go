@@ -17,6 +17,7 @@ const authErrTracer string = "repository.auth"
 
 type AuthRepository interface {
 	CreateAuth(ctx context.Context, data *models.CreateAuth) (auth *models.Auth, err *ce.Error)
+	GetAuthByEmail(ctx context.Context, email string) (auth *models.Auth, err *ce.Error)
 	IsEmailRegistered(ctx context.Context, email string) (exists bool, err *ce.Error)
 	IsEmailReserved(ctx context.Context, email string) (exists bool, err *ce.Error)
 }
@@ -49,6 +50,38 @@ func (r *authRepository) CreateAuth(ctx context.Context, data *models.CreateAuth
 	)
 	if err != nil {
 		e := fmt.Errorf("failed to create auth: %w", err)
+		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+
+	return &auth, nil
+}
+
+func (r *authRepository) GetAuthByEmail(ctx context.Context, email string) (*models.Auth, *ce.Error) {
+	ctx, span := otel.Tracer(authErrTracer).Start(ctx, "GetAuthByEmail")
+	defer span.End()
+
+	query := `
+		SELECT auth_id, email, password, role, is_verified, created_at, updated_at
+		FROM auth
+		WHERE email = $1 AND deleted_at IS NULL
+	`
+	if r.database.InTx(ctx) {
+		query += " FOR UPDATE"
+	}
+
+	row := r.database.QueryRow(ctx, query, email)
+
+	var auth models.Auth
+	err := row.Scan(
+		&auth.ID, &auth.Email, &auth.Password, &auth.Role, &auth.IsVerified,
+		&auth.CreatedAt, &auth.UpdatedAt,
+	)
+	if err != nil {
+		e := fmt.Errorf("failed to fetch auth by email: %w", err)
+		if errors.Is(err, ce.ErrDBReturnNoRows) {
+			return nil, ce.NewError(span, ce.CodeAuthNotFound, ce.MsgInvalidCredentials, e)
+		}
+
 		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
 	}
 

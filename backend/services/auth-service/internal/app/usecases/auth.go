@@ -25,6 +25,7 @@ const authErrTracer string = "usecase.auth"
 
 type AuthUsecase interface {
 	SignUp(ctx context.Context, data *models.CreateAuth) (auth *models.Auth, err *ce.Error)
+	SignIn(ctx context.Context, data *models.GetAuth) (auth *models.Auth, err *ce.Error)
 }
 
 type authUsecase struct {
@@ -119,6 +120,34 @@ func (u *authUsecase) SignUp(ctx context.Context, data *models.CreateAuth) (*mod
 	evKey := fmt.Sprintf("auth_%d", auth.ID)
 
 	_ = u.acp.Publish(ctx, evKey, &ev) // failed to publish event does not fail SignUp process
+
+	return auth, nil
+}
+
+func (u *authUsecase) SignIn(ctx context.Context, data *models.GetAuth) (*models.Auth, *ce.Error) {
+	ctx, span := otel.Tracer(authErrTracer).Start(ctx, "SignIn")
+	defer span.End()
+
+	// Validations
+	if ok, why := u.validator.Email(&data.Email); !ok {
+		err := fmt.Errorf("failed to sign in: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+
+	email := utils.NormalizeString(data.Email)
+	auth, err := u.ar.GetAuthByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	if auth.Password == nil {
+		err := fmt.Errorf("failed to sign in: %w", ce.ErrWrongSignInMethod)
+		return nil, ce.NewError(span, ce.CodeWrongSignInMethod, ce.MsgInvalidCredentials, err)
+	}
+
+	if err := u.bcrypt.Validate(*auth.Password, data.Password); err != nil {
+		e := fmt.Errorf("failed to sign in: %w", err)
+		return nil, ce.NewError(span, ce.CodeInvalidCredentials, ce.MsgInvalidCredentials, e)
+	}
 
 	return auth, nil
 }

@@ -262,6 +262,110 @@ func (x *SignUpResponse) GetAuth() *Auth {
 	return nil
 }
 
+type SignInRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SignInRequest) Reset() {
+	*x = SignInRequest{}
+	mi := &file_v1_auth_api_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SignInRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignInRequest) ProtoMessage() {}
+
+func (x *SignInRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_auth_api_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignInRequest.ProtoReflect.Descriptor instead.
+func (*SignInRequest) Descriptor() ([]byte, []int) {
+	return file_v1_auth_api_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *SignInRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *SignInRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type SignInResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         *AuthToken             `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Auth          *Auth                  `protobuf:"bytes,2,opt,name=auth,proto3" json:"auth,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SignInResponse) Reset() {
+	*x = SignInResponse{}
+	mi := &file_v1_auth_api_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SignInResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignInResponse) ProtoMessage() {}
+
+func (x *SignInResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_auth_api_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignInResponse.ProtoReflect.Descriptor instead.
+func (*SignInResponse) Descriptor() ([]byte, []int) {
+	return file_v1_auth_api_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *SignInResponse) GetToken() *AuthToken {
+	if x != nil {
+		return x.Token
+	}
+	return nil
+}
+
+func (x *SignInResponse) GetAuth() *Auth {
+	if x != nil {
+		return x.Auth
+	}
+	return nil
+}
+
 var File_v1_auth_api_proto protoreflect.FileDescriptor
 
 const file_v1_auth_api_proto_rawDesc = "" +
@@ -285,9 +389,16 @@ const file_v1_auth_api_proto_rawDesc = "" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"]\n" +
 	"\x0eSignUpResponse\x12(\n" +
 	"\x05token\x18\x01 \x01(\v2\x12.auth.v1.AuthTokenR\x05token\x12!\n" +
-	"\x04auth\x18\x02 \x01(\v2\r.auth.v1.AuthR\x04auth2H\n" +
+	"\x04auth\x18\x02 \x01(\v2\r.auth.v1.AuthR\x04auth\"A\n" +
+	"\rSignInRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"]\n" +
+	"\x0eSignInResponse\x12(\n" +
+	"\x05token\x18\x01 \x01(\v2\x12.auth.v1.AuthTokenR\x05token\x12!\n" +
+	"\x04auth\x18\x02 \x01(\v2\r.auth.v1.AuthR\x04auth2\x83\x01\n" +
 	"\vAuthService\x129\n" +
-	"\x06SignUp\x12\x16.auth.v1.SignUpRequest\x1a\x17.auth.v1.SignUpResponseB=Z;auth-service/internal/interface/grpc/protobufs/v1;protobufsb\x06proto3"
+	"\x06SignUp\x12\x16.auth.v1.SignUpRequest\x1a\x17.auth.v1.SignUpResponse\x129\n" +
+	"\x06SignIn\x12\x16.auth.v1.SignInRequest\x1a\x17.auth.v1.SignInResponseB=Z;auth-service/internal/interface/grpc/protobufs/v1;protobufsb\x06proto3"
 
 var (
 	file_v1_auth_api_proto_rawDescOnce sync.Once
@@ -301,26 +412,32 @@ func file_v1_auth_api_proto_rawDescGZIP() []byte {
 	return file_v1_auth_api_proto_rawDescData
 }
 
-var file_v1_auth_api_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_v1_auth_api_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_v1_auth_api_proto_goTypes = []any{
 	(*Auth)(nil),                // 0: auth.v1.Auth
 	(*AuthToken)(nil),           // 1: auth.v1.AuthToken
 	(*SignUpRequest)(nil),       // 2: auth.v1.SignUpRequest
 	(*SignUpResponse)(nil),      // 3: auth.v1.SignUpResponse
-	(*timestamp.Timestamp)(nil), // 4: google.protobuf.Timestamp
+	(*SignInRequest)(nil),       // 4: auth.v1.SignInRequest
+	(*SignInResponse)(nil),      // 5: auth.v1.SignInResponse
+	(*timestamp.Timestamp)(nil), // 6: google.protobuf.Timestamp
 }
 var file_v1_auth_api_proto_depIdxs = []int32{
-	4, // 0: auth.v1.Auth.created_at:type_name -> google.protobuf.Timestamp
-	4, // 1: auth.v1.Auth.updated_at:type_name -> google.protobuf.Timestamp
+	6, // 0: auth.v1.Auth.created_at:type_name -> google.protobuf.Timestamp
+	6, // 1: auth.v1.Auth.updated_at:type_name -> google.protobuf.Timestamp
 	1, // 2: auth.v1.SignUpResponse.token:type_name -> auth.v1.AuthToken
 	0, // 3: auth.v1.SignUpResponse.auth:type_name -> auth.v1.Auth
-	2, // 4: auth.v1.AuthService.SignUp:input_type -> auth.v1.SignUpRequest
-	3, // 5: auth.v1.AuthService.SignUp:output_type -> auth.v1.SignUpResponse
-	5, // [5:6] is the sub-list for method output_type
-	4, // [4:5] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	1, // 4: auth.v1.SignInResponse.token:type_name -> auth.v1.AuthToken
+	0, // 5: auth.v1.SignInResponse.auth:type_name -> auth.v1.Auth
+	2, // 6: auth.v1.AuthService.SignUp:input_type -> auth.v1.SignUpRequest
+	4, // 7: auth.v1.AuthService.SignIn:input_type -> auth.v1.SignInRequest
+	3, // 8: auth.v1.AuthService.SignUp:output_type -> auth.v1.SignUpResponse
+	5, // 9: auth.v1.AuthService.SignIn:output_type -> auth.v1.SignInResponse
+	8, // [8:10] is the sub-list for method output_type
+	6, // [6:8] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_v1_auth_api_proto_init() }
@@ -334,7 +451,7 @@ func file_v1_auth_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_auth_api_proto_rawDesc), len(file_v1_auth_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

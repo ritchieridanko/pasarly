@@ -19,3 +19,8 @@ type CreateAuth struct {
 	Password *string
 	Role     string
 }
+
+type GetAuth struct {
+	Email    string
+	Password string
+}
