@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package auth.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "auth-service/internal/interface/grpc/protobufs/v1;protobufs";
+
+message Auth {
+  int64 id = 1;
+  string email = 2;
+  string role = 3;
+  bool is_verified = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message AuthToken {
+  string session = 1;
+  string access = 2;
+}
+
+message SignUpRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message SignUpResponse {
+  AuthToken token = 1;
+  Auth auth = 2;
+}
+
+service AuthService {
+  rpc SignUp (SignUpRequest) returns (SignUpResponse);
+}
