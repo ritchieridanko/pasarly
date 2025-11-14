@@ -3,8 +3,9 @@ BINARY_DIR := bin
 APP_BIN := $(BINARY_DIR)/app
 MIGRATOR_BIN := $(BINARY_DIR)/migrator
 PROTOC := protoc
-PROTO_DIR := api/proto/v1
-PB_DIR := internal/interface/grpc/protobufs
+PROTO_DIR := proto
+PROTO_API_DIR := internal/interface/grpc/protobufs
+PROTO_EVENT_DIR := internal/app/events
 
 help:
 	@echo "Available commands:"
@@ -43,13 +44,19 @@ build-and-run-app:
 build-protobuf:
 	make drop-protobuf
 	$(PROTOC) \
-	--proto_path=$(PROTO_DIR) \
-	--go_out=$(PB_DIR) --go_opt=paths=source_relative \
-	--go-grpc_out=$(PB_DIR) --go-grpc_opt=paths=source_relative \
-	$(PROTO_DIR)/*.proto
+		--proto_path=$(PROTO_DIR) \
+		--go_out=$(PROTO_API_DIR) --go_opt=paths=source_relative \
+		--go-grpc_out=$(PROTO_API_DIR) --go-grpc_opt=paths=source_relative \
+		$(PROTO_DIR)/*/*_api.proto
+	$(PROTOC) \
+		--proto_path=$(PROTO_DIR) \
+		--go_out=$(PROTO_EVENT_DIR) --go_opt=paths=source_relative \
+		--go-grpc_out=$(PROTO_EVENT_DIR) --go-grpc_opt=paths=source_relative \
+		$(PROTO_DIR)/*/*_event.proto
 
 drop-protobuf:
-	@find $(PB_DIR) -name "*.pb.go" -type f -delete
+	@find $(PROTO_API_DIR) -name "*.pb.go" -type f -delete
+	@find $(PROTO_EVENT_DIR) -name "*.pb.go" -type f -delete
 
 # ---------- Database Commands (local only) ----------
 setup-database:

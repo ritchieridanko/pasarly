@@ -9,6 +9,8 @@ import (
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/cache"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/database"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/logger"
+	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/publisher"
+	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
 )
 
@@ -16,6 +18,9 @@ type Infra struct {
 	logger   *zap.Logger
 	cache    *redis.Client
 	database *pgxpool.Pool
+
+	// Publishers
+	acp *kafka.Writer
 }
 
 func Init(cfg *configs.Config) (*Infra, error) {
@@ -34,7 +39,12 @@ func Init(cfg *configs.Config) (*Infra, error) {
 		return nil, err
 	}
 
-	return &Infra{logger: l, cache: c, database: db}, nil
+	acp, err := publisher.Init(&cfg.Broker, "auth.created", l)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Infra{logger: l, cache: c, database: db, acp: acp}, nil
 }
 
 func (i *Infra) Logger() *zap.Logger {
@@ -49,12 +59,19 @@ func (i *Infra) DB() *pgxpool.Pool {
 	return i.database
 }
 
+func (i *Infra) PubAuthCreated() *kafka.Writer {
+	return i.acp
+}
+
 func (i *Infra) Close() error {
 	if err := i.logger.Sync(); err != nil {
 		return fmt.Errorf("failed to flush logger: %w", err)
 	}
 	if err := i.cache.Close(); err != nil {
 		return fmt.Errorf("failed to close cache: %w", err)
+	}
+	if err := i.acp.Close(); err != nil {
+		return fmt.Errorf("failed to close publisher (auth.created): %w", err)
 	}
 
 	i.database.Close()

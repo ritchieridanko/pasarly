@@ -15,6 +15,7 @@ type Config struct {
 	Server   `mapstructure:"server"`
 	Database `mapstructure:"database"`
 	Cache    `mapstructure:"cache"`
+	Broker   `mapstructure:"broker"`
 }
 
 type App struct {
@@ -74,6 +75,15 @@ type Cache struct {
 	Pass       string `mapstructure:"pass"`
 	MaxRetries int    `mapstructure:"max_retries"`
 	BaseDelay  int    `mapstructure:"base_delay"`
+}
+
+type Broker struct {
+	Brokers     string `mapstructure:"brokers"`
+	MaxAttempts int    `mapstructure:"max_attempts"`
+
+	Timeout struct {
+		Batch time.Duration `mapstructure:"batch"`
+	} `mapstructure:"timeout"`
 }
 
 func Init(path string) (*Config, error) {

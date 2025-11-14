@@ -8,6 +8,7 @@ import (
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/cache"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/database"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/logger"
+	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/publisher"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/handlers"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/server"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/service"
@@ -39,6 +40,7 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 	c := cache.NewCache(&cfg.Cache, i.Cache())
 	db := database.NewDatabase(i.DB())
 	tx := database.NewTransactor(i.DB())
+	acp := publisher.NewPublisher(i.PubAuthCreated(), l)
 
 	// Repositories
 	ar := repositories.NewAuthRepository(db, c)
@@ -49,7 +51,7 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 	s := service.Init(cfg)
 
 	// Usecases
-	au := usecases.NewAuthUsecase(ar, tr, tx, s.BCrypt(), s.Validator(), l)
+	au := usecases.NewAuthUsecase(ar, tr, tx, acp, s.BCrypt(), s.Validator(), l)
 	su := usecases.NewSessionUsecase(&cfg.Auth, sr, tx, s.JWT())
 
 	// Handlers

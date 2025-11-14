@@ -7,7 +7,7 @@ import (
 	"github.com/ritchieridanko/pasarly/auth-service/internal/app/models"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/app/usecases"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/logger"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/protobufs"
+	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/protobufs/v1"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/constants"
 	"go.opentelemetry.io/otel"
 	"google.golang.org/protobuf/types/known/timestamppb"

@@ -4,7 +4,7 @@ package auth.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "auth-service/internal/interface/grpc/protobufs;protobufs";
+option go_package = "auth-service/internal/interface/grpc/protobufs/v1;protobufs";
 
 message Auth {
   int64 id = 1;
@@ -26,8 +26,8 @@ message SignUpRequest {
 }
 
 message SignUpResponse {
-  AuthToken token = 2;
-  Auth auth = 1;
+  AuthToken token = 1;
+  Auth auth = 2;
 }
 
 service AuthService {

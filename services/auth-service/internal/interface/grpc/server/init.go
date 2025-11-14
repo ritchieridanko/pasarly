@@ -8,7 +8,7 @@ import (
 	"github.com/ritchieridanko/pasarly/auth-service/configs"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/logger"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/handlers"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/protobufs"
+	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/protobufs/v1"
 	"google.golang.org/grpc"
 )
 
