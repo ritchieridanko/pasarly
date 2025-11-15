@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package auth.v1;
 
+import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 option go_package = "auth-service/internal/interface/grpc/protobufs/v1;protobufs";
@@ -40,7 +41,12 @@ message SignInResponse {
   Auth auth = 2;
 }
 
+message SignOutRequest {
+  string session = 1;
+}
+
 service AuthService {
   rpc SignUp (SignUpRequest) returns (SignUpResponse);
   rpc SignIn (SignInRequest) returns (SignInResponse);
+  rpc SignOut (SignOutRequest) returns (google.protobuf.Empty);
 }

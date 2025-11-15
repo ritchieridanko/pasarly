@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/ritchieridanko/pasarly/auth-service/internal/app/repositories"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/database"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/service/jwt"
+	"github.com/ritchieridanko/pasarly/auth-service/internal/service/validator"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/ce"
 	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/utils"
 	"go.opentelemetry.io/otel"
@@ -19,6 +21,7 @@ const sessionErrTracer string = "usecase.session"
 
 type SessionUsecase interface {
 	CreateSession(ctx context.Context, auth *models.Auth, rm *models.RequestMeta) (at *models.AuthToken, err *ce.Error)
+	RevokeSession(ctx context.Context, sessionToken string) (err *ce.Error)
 }
 
 type sessionUsecase struct {
@@ -26,6 +29,7 @@ type sessionUsecase struct {
 	sr         repositories.SessionRepository
 	transactor *database.Transactor
 	jwt        *jwt.JWT
+	validator  *validator.Validator
 }
 
 func NewSessionUsecase(
@@ -33,8 +37,9 @@ func NewSessionUsecase(
 	sr repositories.SessionRepository,
 	tx *database.Transactor,
 	j *jwt.JWT,
+	v *validator.Validator,
 ) SessionUsecase {
-	return &sessionUsecase{config: cfg, sr: sr, transactor: tx, jwt: j}
+	return &sessionUsecase{config: cfg, sr: sr, transactor: tx, jwt: j, validator: v}
 }
 
 func (u *sessionUsecase) CreateSession(ctx context.Context, auth *models.Auth, rm *models.RequestMeta) (*models.AuthToken, *ce.Error) {
@@ -70,4 +75,17 @@ func (u *sessionUsecase) CreateSession(ctx context.Context, auth *models.Auth, r
 	})
 
 	return &models.AuthToken{Session: sessionToken, Access: accessToken}, err
+}
+
+func (u *sessionUsecase) RevokeSession(ctx context.Context, sessionToken string) *ce.Error {
+	ctx, span := otel.Tracer(sessionErrTracer).Start(ctx, "RevokeSession")
+	defer span.End()
+
+	// Validation
+	if ok, why := u.validator.Token(&sessionToken); !ok {
+		err := fmt.Errorf("failed to revoke session: %w", errors.New(why))
+		return ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+
+	return u.sr.RevokeSessionByToken(ctx, sessionToken)
 }

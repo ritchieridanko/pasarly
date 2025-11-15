@@ -34,7 +34,7 @@ func (e *Error) GRPCStatus() error {
 	switch e.Code {
 	case CodeInvalidPayload:
 		return status.Error(codes.InvalidArgument, e.Message)
-	case CodeAuthNotFound, CodeInvalidCredentials, CodeWrongSignInMethod:
+	case CodeAuthNotFound, CodeInvalidCredentials, CodeSessionNotFound, CodeWrongSignInMethod:
 		return status.Error(codes.Unauthenticated, e.Message)
 	case CodeDataConflict:
 		return status.Error(codes.AlreadyExists, e.Message)
@@ -51,7 +51,7 @@ func (e *Error) HTTPStatus() int {
 	switch e.Code {
 	case CodeInvalidPayload:
 		return http.StatusBadRequest
-	case CodeAuthNotFound, CodeInvalidCredentials, CodeWrongSignInMethod:
+	case CodeAuthNotFound, CodeInvalidCredentials, CodeSessionNotFound, CodeWrongSignInMethod:
 		return http.StatusUnauthorized
 	case CodeDataConflict:
 		return http.StatusConflict

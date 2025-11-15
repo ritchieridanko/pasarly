@@ -16,6 +16,7 @@ const sessionErrTracer string = "repository.session"
 
 type SessionRepository interface {
 	CreateSession(ctx context.Context, authID int64, data *models.CreateSession) (err *ce.Error)
+	RevokeSessionByToken(ctx context.Context, token string) (err *ce.Error)
 	RevokeActiveSession(ctx context.Context, authID int64, rm *models.RequestMeta) (sessionID int64, err *ce.Error)
 }
 
@@ -42,6 +43,28 @@ func (r *sessionRepository) CreateSession(ctx context.Context, authID int64, dat
 	)
 	if err != nil {
 		e := fmt.Errorf("failed to create session: %w", err)
+		return ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+
+	return nil
+}
+
+func (r *sessionRepository) RevokeSessionByToken(ctx context.Context, token string) *ce.Error {
+	ctx, span := otel.Tracer(sessionErrTracer).Start(ctx, "RevokeSessionByToken")
+	defer span.End()
+
+	query := `
+		UPDATE sessions
+		SET revoked_at = NOW()
+		WHERE token = $1 AND revoked_at IS NULL AND expires_at >= $2
+	`
+
+	if err := r.database.Execute(ctx, query, token, time.Now().UTC()); err != nil {
+		e := fmt.Errorf("failed to revoke session by token: %w", err)
+		if errors.Is(err, ce.ErrDBAffectNoRows) {
+			return ce.NewError(span, ce.CodeSessionNotFound, ce.MsgInvalidCredentials, e)
+		}
+
 		return ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
 	}
 

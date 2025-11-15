@@ -54,3 +54,16 @@ func (v *Validator) Password(value *string) (bool, string) {
 	}
 	return true, ""
 }
+
+func (v *Validator) Token(value *string) (bool, string) {
+	if value == nil {
+		return false, "Token is not provided"
+	}
+
+	val := strings.TrimSpace(*value)
+	if val == "" {
+		return false, "Token is empty"
+	}
+
+	return true, ""
+}

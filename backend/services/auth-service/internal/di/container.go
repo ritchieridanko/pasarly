@@ -52,7 +52,7 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 
 	// Usecases
 	au := usecases.NewAuthUsecase(ar, tr, tx, acp, s.BCrypt(), s.Validator(), l)
-	su := usecases.NewSessionUsecase(&cfg.Auth, sr, tx, s.JWT())
+	su := usecases.NewSessionUsecase(&cfg.Auth, sr, tx, s.JWT(), s.Validator())
 
 	// Handlers
 	agh := handlers.NewAuthGRPCHandler(au, su, l)

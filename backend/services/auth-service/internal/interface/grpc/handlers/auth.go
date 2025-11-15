@@ -13,6 +13,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -131,4 +132,16 @@ func (h *AuthGRPCHandler) SignIn(ctx context.Context, req *protobufs.SignInReque
 			UpdatedAt:  timestamppb.New(auth.UpdatedAt),
 		},
 	}, nil
+}
+
+func (h *AuthGRPCHandler) SignOut(ctx context.Context, req *protobufs.SignOutRequest) (*emptypb.Empty, error) {
+	ctx, span := otel.Tracer(authErrTracer).Start(ctx, "SignOut")
+	defer span.End()
+
+	if err := h.su.RevokeSession(ctx, req.GetSession()); err != nil {
+		h.logger.Sugar().Errorln(err.Error())
+		return nil, err.GRPCStatus()
+	}
+
+	return &emptypb.Empty{}, nil
 }

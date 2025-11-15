@@ -18,6 +18,7 @@ const (
 	CodeHashingFailed      errCode = "HASHING_FAILED_ERR"
 	CodeInvalidCredentials errCode = "INVALID_CREDENTIALS_ERR"
 	CodeInvalidPayload     errCode = "INVALID_PAYLOAD_ERR"
+	CodeSessionNotFound    errCode = "SESSION_NOT_FOUND_ERR"
 	CodeWrongSignInMethod  errCode = "WRONG_SIGN_IN_METHOD_ERR"
 )
 
