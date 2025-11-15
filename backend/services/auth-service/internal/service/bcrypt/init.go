@@ -1,7 +1,7 @@
 package bcrypt
 
 import (
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
 	"golang.org/x/crypto/bcrypt"
 )
 

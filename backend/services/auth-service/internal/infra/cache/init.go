@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
 	"go.uber.org/zap"
 )
 

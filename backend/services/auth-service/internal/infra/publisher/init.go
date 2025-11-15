@@ -3,7 +3,7 @@ package publisher
 import (
 	"strings"
 
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
 )

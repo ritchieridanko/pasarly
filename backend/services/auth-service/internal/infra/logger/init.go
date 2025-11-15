@@ -3,7 +3,7 @@ package logger
 import (
 	"fmt"
 
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
 	"go.uber.org/zap"
 )
 

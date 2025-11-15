@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
 	"go.uber.org/zap"
 )
 

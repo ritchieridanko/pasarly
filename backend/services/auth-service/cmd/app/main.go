@@ -7,10 +7,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/di"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/server"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/di"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/interface/grpc/server"
 )
 
 func main() {

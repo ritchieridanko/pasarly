@@ -3,8 +3,8 @@ package publisher
 import (
 	"context"
 
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/logger"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/constants"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/logger"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/shared/constants"
 	"github.com/segmentio/kafka-go"
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/proto"

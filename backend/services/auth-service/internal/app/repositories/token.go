@@ -3,10 +3,10 @@ package repositories
 import (
 	"fmt"
 
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/cache"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/ce"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/constants"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/cache"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/shared/ce"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/shared/constants"
 	"go.opentelemetry.io/otel"
 	"golang.org/x/net/context"
 )

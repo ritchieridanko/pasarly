@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/app/models"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/app/repositories"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/database"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/service/jwt"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/service/validator"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/ce"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/utils"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/app/models"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/app/repositories"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/database"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/service/jwt"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/service/validator"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/shared/ce"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/shared/utils"
 	"go.opentelemetry.io/otel"
 )
 

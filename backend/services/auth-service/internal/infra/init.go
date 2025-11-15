@@ -5,11 +5,11 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/cache"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/database"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/logger"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/publisher"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/cache"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/database"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/logger"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/publisher"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
 )

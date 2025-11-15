@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/app/models"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/app/models"
 )
 
 type JWT struct {

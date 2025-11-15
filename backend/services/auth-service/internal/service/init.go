@@ -1,10 +1,10 @@
 package service
 
 import (
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/service/bcrypt"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/service/jwt"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/service/validator"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/service/bcrypt"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/service/jwt"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/service/validator"
 )
 
 type Service struct {

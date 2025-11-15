@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/logger"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/handlers"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/protobufs/v1"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/logger"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/interface/grpc/handlers"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/interface/grpc/protobufs/v1"
 	"google.golang.org/grpc"
 )
 

@@ -5,7 +5,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/ce"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/shared/ce"
 )
 
 type Database struct {

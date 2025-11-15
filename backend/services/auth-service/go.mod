@@ -1,4 +1,4 @@
-module github.com/ritchieridanko/pasarly/auth-service
+module github.com/ritchieridanko/pasarly/backend/services/auth-service
 
 go 1.24.2
 

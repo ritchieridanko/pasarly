@@ -1,17 +1,17 @@
 package di
 
 import (
-	"github.com/ritchieridanko/pasarly/auth-service/configs"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/app/repositories"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/app/usecases"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/cache"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/database"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/logger"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/publisher"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/handlers"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/interface/grpc/server"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/service"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/app/repositories"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/app/usecases"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/cache"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/database"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/logger"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/publisher"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/interface/grpc/handlers"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/interface/grpc/server"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/service"
 )
 
 type Container struct {

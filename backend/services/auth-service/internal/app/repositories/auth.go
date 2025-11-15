@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ritchieridanko/pasarly/auth-service/internal/app/models"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/cache"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/infra/database"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/ce"
-	"github.com/ritchieridanko/pasarly/auth-service/internal/shared/constants"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/app/models"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/cache"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/infra/database"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/shared/ce"
+	"github.com/ritchieridanko/pasarly/backend/services/auth-service/internal/shared/constants"
 	"go.opentelemetry.io/otel"
 )
 
