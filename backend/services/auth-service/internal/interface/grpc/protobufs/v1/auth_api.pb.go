@@ -446,7 +446,7 @@ const file_v1_auth_api_proto_rawDesc = "" +
 	"\vAuthService\x129\n" +
 	"\x06SignUp\x12\x16.auth.v1.SignUpRequest\x1a\x17.auth.v1.SignUpResponse\x129\n" +
 	"\x06SignIn\x12\x16.auth.v1.SignInRequest\x1a\x17.auth.v1.SignInResponse\x12:\n" +
-	"\aSignOut\x12\x17.auth.v1.SignOutRequest\x1a\x16.google.protobuf.EmptyB=Z;auth-service/internal/interface/grpc/protobufs/v1;protobufsb\x06proto3"
+	"\aSignOut\x12\x17.auth.v1.SignOutRequest\x1a\x16.google.protobuf.EmptyBgZegithub.com/ritchieridanko/pasarly/backend/auth-service/internal/interface/grpc/protobufs/v1;protobufsb\x06proto3"
 
 var (
 	file_v1_auth_api_proto_rawDescOnce sync.Once

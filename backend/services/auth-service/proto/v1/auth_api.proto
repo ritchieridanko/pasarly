@@ -5,7 +5,7 @@ package auth.v1;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "auth-service/internal/interface/grpc/protobufs/v1;protobufs";
+option go_package = "github.com/ritchieridanko/pasarly/backend/auth-service/internal/interface/grpc/protobufs/v1;protobufs";
 
 message Auth {
   int64 id = 1;

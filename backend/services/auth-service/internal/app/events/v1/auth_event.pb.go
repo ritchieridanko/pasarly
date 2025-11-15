@@ -91,7 +91,7 @@ const file_v1_auth_event_proto_rawDesc = "" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x14\n" +
 	"\x05token\x18\x02 \x01(\tR\x05token\x129\n" +
 	"\n" +
-	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtB,Z*auth-service/internal/app/events/v1;eventsb\x06proto3"
+	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtBVZTgithub.com/ritchieridanko/pasarly/backend/auth-service/internal/app/events/v1;eventsb\x06proto3"
 
 var (
 	file_v1_auth_event_proto_rawDescOnce sync.Once
