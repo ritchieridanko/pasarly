@@ -45,7 +45,7 @@ func (h *AuthHandler) SignUp(ctx *gin.Context) {
 		constants.CtxKeyIPAddress, ctx.ClientIP(),
 	))
 
-	respSU, err := h.as.SignUp(oc, &req)
+	resp, err := h.as.SignUp(oc, &req)
 	if err != nil {
 		ctx.Error(ce.FromGRPCErr(span, err))
 		return
@@ -56,14 +56,59 @@ func (h *AuthHandler) SignUp(ctx *gin.Context) {
 		http.StatusCreated,
 		"Signed up successfully",
 		dtos.SignUpResponse{
-			AccessToken: respSU.GetToken().GetAccess(),
+			AccessToken: resp.GetToken().GetAccess(),
 			Auth: dtos.Auth{
-				ID:         respSU.GetAuth().GetId(),
-				Email:      respSU.GetAuth().GetEmail(),
-				Role:       respSU.GetAuth().GetRole(),
-				IsVerified: respSU.GetAuth().GetIsVerified(),
-				CreatedAt:  respSU.GetAuth().GetCreatedAt().AsTime(),
-				UpdatedAt:  respSU.GetAuth().GetUpdatedAt().AsTime(),
+				ID:         resp.GetAuth().GetId(),
+				Email:      resp.GetAuth().GetEmail(),
+				Role:       resp.GetAuth().GetRole(),
+				IsVerified: resp.GetAuth().GetIsVerified(),
+				CreatedAt:  resp.GetAuth().GetCreatedAt().AsTime(),
+				UpdatedAt:  resp.GetAuth().GetUpdatedAt().AsTime(),
+			},
+		},
+	)
+}
+
+func (h *AuthHandler) SignIn(ctx *gin.Context) {
+	c, span := otel.Tracer(authErrTracer).Start(ctx.Request.Context(), "SignIn")
+	defer span.End()
+
+	var payload dtos.SignInRequest
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		e := fmt.Errorf("failed to sign in: %w", err)
+		ctx.Error(ce.NewError(span, ce.CodeInvalidPayload, ce.MsgInvalidPayload, e))
+		return
+	}
+
+	req := apis.SignInRequest{
+		Email:    payload.Email,
+		Password: payload.Password,
+	}
+
+	oc := metadata.NewOutgoingContext(c, metadata.Pairs(
+		constants.CtxKeyUserAgent, ctx.Request.UserAgent(),
+		constants.CtxKeyIPAddress, ctx.ClientIP(),
+	))
+
+	resp, err := h.as.SignIn(oc, &req)
+	if err != nil {
+		ctx.Error(ce.FromGRPCErr(span, err))
+		return
+	}
+
+	utils.SendResponse(
+		ctx,
+		http.StatusOK,
+		"Signed in successfully",
+		dtos.SignInResponse{
+			AccessToken: resp.GetToken().GetAccess(),
+			Auth: dtos.Auth{
+				ID:         resp.GetAuth().GetId(),
+				Email:      resp.GetAuth().GetEmail(),
+				Role:       resp.GetAuth().GetRole(),
+				IsVerified: resp.GetAuth().GetIsVerified(),
+				CreatedAt:  resp.GetAuth().GetCreatedAt().AsTime(),
+				UpdatedAt:  resp.GetAuth().GetUpdatedAt().AsTime(),
 			},
 		},
 	)
