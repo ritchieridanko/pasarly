@@ -1,0 +1,15 @@
+app:
+  name: "API-GATEWAY"
+
+server:
+  host: "localhost"
+  port: 8080
+  timeout:
+    read: "5s"
+    write: "5s"
+    shutdown: "10s"
+
+service:
+  auth:
+    host: "localhost"
+    port: 50051

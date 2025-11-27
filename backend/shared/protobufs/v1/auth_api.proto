@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package auth.v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/ritchieridanko/pasarly/backend/shared/apis/v1;apis";
+
+message Auth {
+  int64 id = 1;
+  string email = 2;
+  string role = 3;
+  bool is_verified = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message AuthToken {
+  string session = 1;
+  string access = 2;
+}
+
+message SignUpRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message SignUpResponse {
+  AuthToken token = 1;
+  Auth auth = 2;
+}
+
+message SignInRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message SignInResponse {
+  AuthToken token = 1;
+  Auth auth = 2;
+}
+
+message SignOutRequest {
+  string session = 1;
+}
+
+service AuthService {
+  rpc SignUp (SignUpRequest) returns (SignUpResponse);
+  rpc SignIn (SignInRequest) returns (SignInResponse);
+  rpc SignOut (SignOutRequest) returns (google.protobuf.Empty);
+}

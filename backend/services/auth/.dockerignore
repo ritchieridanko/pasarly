@@ -1,0 +1,6 @@
+bin/
+*.out
+*.md
+Dockerfile.app
+Dockerfile.migrator
+Makefile

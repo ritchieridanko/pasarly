@@ -1,9 +1,0 @@
-.env
-
-# Binaries
-/auth-service/cmd/app/app
-/auth-service/cmd/migrator/migrator
-
-# Go build cache
-/bin/
-*.out
