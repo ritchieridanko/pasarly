@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/configs"
+	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/infra/logger"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/interface/handlers"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/interface/middlewares"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
@@ -15,11 +16,11 @@ type Router struct {
 	router *gin.Engine
 }
 
-func Init(cfg *configs.Config, ah *handlers.AuthHandler) *Router {
+func Init(cfg *configs.Config, l *logger.Logger, ah *handlers.AuthHandler) *Router {
 	r := gin.New()
 	r.Use(otelgin.Middleware(cfg.App.Name))
 	r.Use(gin.Recovery())
-	r.Use(gin.Logger())
+	r.Use(middlewares.Logger(l))
 
 	r.ContextWithFallback = true
 
