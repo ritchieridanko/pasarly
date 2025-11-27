@@ -37,6 +37,7 @@ func Init(cfg *configs.Config, ah *handlers.AuthHandler) *Router {
 	{
 		auth.POST("/sign-up", ah.SignUp)
 		auth.POST("/sign-in", ah.SignIn)
+		auth.POST("/sign-out", ah.SignOut)
 	}
 
 	return &Router{config: cfg, router: r}

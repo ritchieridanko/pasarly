@@ -11,6 +11,7 @@ const (
 	CodeAuthNotFound       errCode = "AUTH_NOT_FOUND_ERR"
 	CodeCacheQueryExec     errCode = "CACHE_QUERY_EXEC_ERR"
 	CodeCacheScriptExec    errCode = "CACHE_SCRIPT_EXEC_ERR"
+	CodeCookieNotFound     errCode = "COOKIE_NOT_FOUND_ERR"
 	CodeDataConflict       errCode = "DATA_CONFLICT_ERR"
 	CodeDBQueryExec        errCode = "DB_QUERY_EXEC_ERR"
 	CodeDBTx               errCode = "DB_TX_ERR"
@@ -31,6 +32,7 @@ const (
 	MsgInternalServer         string = "Internal server error"
 	MsgInvalidCredentials     string = "Invalid credentials"
 	MsgInvalidPayload         string = "Invalid payload"
+	MsgUnauthenticated        string = "Unauthenticated"
 )
 
 // Internal errors

@@ -10,9 +10,10 @@ import (
 )
 
 type Config struct {
-	App     `mapstructure:"app"`
-	Server  `mapstructure:"server"`
-	Service `mapstructure:"service"`
+	App      `mapstructure:"app"`
+	Server   `mapstructure:"server"`
+	Service  `mapstructure:"service"`
+	Duration `mapstructure:"duration"`
 }
 
 type App struct {
@@ -37,6 +38,10 @@ type Service struct {
 		Host string `mapstructure:"host"`
 		Port int    `mapstructure:"port"`
 	} `mapstructure:"auth"`
+}
+
+type Duration struct {
+	Session time.Duration `mapstructure:"session"`
 }
 
 func Init(path string) (*Config, error) {

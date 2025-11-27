@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ritchieridanko/pasarly/backend/services/gateway/configs"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/constants"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/interface/dtos"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/utils"
@@ -17,11 +19,13 @@ import (
 const authErrTracer string = "handler.auth"
 
 type AuthHandler struct {
-	as apis.AuthServiceClient
+	config *configs.Config
+	as     apis.AuthServiceClient
+	cookie *utils.Cookie
 }
 
-func NewAuthHandler(as apis.AuthServiceClient) *AuthHandler {
-	return &AuthHandler{as: as}
+func NewAuthHandler(cfg *configs.Config, as apis.AuthServiceClient, c *utils.Cookie) *AuthHandler {
+	return &AuthHandler{config: cfg, as: as, cookie: c}
 }
 
 func (h *AuthHandler) SignUp(ctx *gin.Context) {
@@ -50,6 +54,14 @@ func (h *AuthHandler) SignUp(ctx *gin.Context) {
 		ctx.Error(ce.FromGRPCErr(span, err))
 		return
 	}
+
+	h.cookie.Set(
+		ctx,
+		constants.CookieKeySession,
+		resp.GetToken().Session,
+		h.config.Duration.Session,
+		"/",
+	)
 
 	utils.SendResponse(
 		ctx,
@@ -96,6 +108,14 @@ func (h *AuthHandler) SignIn(ctx *gin.Context) {
 		return
 	}
 
+	h.cookie.Set(
+		ctx,
+		constants.CookieKeySession,
+		resp.GetToken().Session,
+		h.config.Duration.Session,
+		"/",
+	)
+
 	utils.SendResponse(
 		ctx,
 		http.StatusOK,
@@ -112,4 +132,35 @@ func (h *AuthHandler) SignIn(ctx *gin.Context) {
 			},
 		},
 	)
+}
+
+func (h *AuthHandler) SignOut(ctx *gin.Context) {
+	c, span := otel.Tracer(authErrTracer).Start(ctx.Request.Context(), "SignOut")
+	defer span.End()
+
+	session, err := ctx.Cookie(constants.CookieKeySession)
+	e := fmt.Errorf("failed to sign out: %w", err)
+
+	if errors.Is(err, http.ErrNoCookie) {
+		ctx.Error(ce.NewError(span, ce.CodeCookieNotFound, ce.MsgUnauthenticated, e))
+		return
+	}
+	if err != nil {
+		ctx.Error(ce.NewError(span, ce.CodeInternal, ce.MsgInternalServer, e))
+		return
+	}
+	if session == "" {
+		e := fmt.Errorf("failed to sign out: %w", http.ErrNoCookie)
+		ctx.Error(ce.NewError(span, ce.CodeCookieNotFound, ce.MsgUnauthenticated, e))
+		return
+	}
+
+	_, err = h.as.SignOut(c, &apis.SignOutRequest{Session: session})
+	if err != nil {
+		ctx.Error(ce.FromGRPCErr(span, err))
+		return
+	}
+
+	h.cookie.Unset(ctx, constants.CookieKeySession, "/")
+	utils.SendResponse[any](ctx, http.StatusNoContent, "", nil)
 }

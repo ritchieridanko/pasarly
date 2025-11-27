@@ -51,7 +51,7 @@ func (e *Error) ToHTTPStatus() int {
 	switch e.Code {
 	case CodeInvalidPayload:
 		return http.StatusBadRequest
-	case CodeUnauthenticated:
+	case CodeCookieNotFound, CodeUnauthenticated:
 		return http.StatusUnauthorized
 	case CodeDataConflict:
 		return http.StatusConflict

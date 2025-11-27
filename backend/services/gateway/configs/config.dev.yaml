@@ -13,3 +13,6 @@ service:
   auth:
     host: "localhost"
     port: 50051
+
+duration:
+  session: "24h"
