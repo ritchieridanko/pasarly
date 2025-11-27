@@ -32,12 +32,14 @@ func Init(cfg *configs.Config, ah *handlers.AuthHandler) *Router {
 
 	v1 := r.Group("/api/v1", middlewares.NewRequestID())
 
+	secret := cfg.JWT.Secret
+
 	// Auth
 	auth := v1.Group("/auth")
 	{
 		auth.POST("/sign-up", ah.SignUp)
 		auth.POST("/sign-in", ah.SignIn)
-		auth.POST("/sign-out", ah.SignOut)
+		auth.POST("/sign-out", middlewares.Authenticate(secret), ah.SignOut)
 	}
 
 	return &Router{config: cfg, router: r}

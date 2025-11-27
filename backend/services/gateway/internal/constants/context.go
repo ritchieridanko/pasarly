@@ -3,7 +3,10 @@ package constants
 type ctxKey string
 
 const (
-	CtxKeyRequestID ctxKey = "request-id"
+	CtxKeyAuthID     ctxKey = "auth-id"
+	CtxKeyIsVerified ctxKey = "is-verified"
+	CtxKeyRequestID  ctxKey = "request-id"
+	CtxKeyRole       ctxKey = "role"
 )
 
 const (

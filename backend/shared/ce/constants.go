@@ -20,7 +20,10 @@ const (
 	CodeInternal           errCode = "INTERNAL_ERR"
 	CodeInvalidCredentials errCode = "INVALID_CREDENTIALS_ERR"
 	CodeInvalidPayload     errCode = "INVALID_PAYLOAD_ERR"
+	CodeInvalidToken       errCode = "INVALID_TOKEN_ERR"
 	CodeSessionNotFound    errCode = "SESSION_NOT_FOUND_ERR"
+	CodeTokenExpired       errCode = "TOKEN_EXPIRED_ERR"
+	CodeTokenMalformed     errCode = "TOKEN_MALFORMED_ERR"
 	CodeUnauthenticated    errCode = "UNAUTHENTICATED_ERR"
 	CodeUnknown            errCode = "UNKNOWN_ERR"
 	CodeWrongSignInMethod  errCode = "WRONG_SIGN_IN_METHOD_ERR"
@@ -41,5 +44,6 @@ var (
 	ErrDBReturnNoRows         error = pgx.ErrNoRows
 	ErrEmailAlreadyRegistered error = errors.New("email already registered")
 	ErrEmailReserved          error = errors.New("email reserved")
+	ErrInvalidToken           error = errors.New("invalid token")
 	ErrWrongSignInMethod      error = errors.New("wrong sign in method")
 )

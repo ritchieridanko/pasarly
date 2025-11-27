@@ -13,6 +13,7 @@ type Config struct {
 	App      `mapstructure:"app"`
 	Server   `mapstructure:"server"`
 	Service  `mapstructure:"service"`
+	JWT      `mapstructure:"jwt"`
 	Duration `mapstructure:"duration"`
 }
 
@@ -38,6 +39,10 @@ type Service struct {
 		Host string `mapstructure:"host"`
 		Port int    `mapstructure:"port"`
 	} `mapstructure:"auth"`
+}
+
+type JWT struct {
+	Secret string `mapstructure:"secret"`
 }
 
 type Duration struct {
