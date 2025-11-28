@@ -19,3 +19,7 @@ jwt:
 
 duration:
   session: "24h"
+
+tracer:
+  host: "localhost"
+  port: 4317

@@ -15,6 +15,7 @@ type Config struct {
 	Service  `mapstructure:"service"`
 	JWT      `mapstructure:"jwt"`
 	Duration `mapstructure:"duration"`
+	Tracer   `mapstructure:"tracer"`
 }
 
 type App struct {
@@ -49,6 +50,12 @@ type Duration struct {
 	Session time.Duration `mapstructure:"session"`
 }
 
+type Tracer struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Endpoint string
+}
+
 func Init(path string) (*Config, error) {
 	if path == "" {
 		path = "./configs"
@@ -77,6 +84,7 @@ func Init(path string) (*Config, error) {
 
 	cfg.App.Env = env
 	cfg.Auth.Addr = fmt.Sprintf("%s:%d", cfg.Auth.Host, cfg.Auth.Port)
+	cfg.Tracer.Endpoint = fmt.Sprintf("%s:%d", cfg.Tracer.Host, cfg.Tracer.Port)
 
 	return &cfg, nil
 }
