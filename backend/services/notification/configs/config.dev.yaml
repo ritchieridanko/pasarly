@@ -1,0 +1,22 @@
+app:
+  name: "NOTIFICATION-SERVICE"
+
+client:
+  base_url: "http://localhost:3000"
+
+broker:
+  brokers: "localhost:9092,localhost:9093,localhost:9094"
+  max_bytes: 10000000
+  max_attempts: 3
+  base_delay: 100
+
+mailer:
+  host: "smtp.gmail.com"
+  port: 587
+  user: ""
+  pass: ""
+  from: ""
+
+tracer:
+  host: "localhost"
+  port: 4317

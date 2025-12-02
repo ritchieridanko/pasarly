@@ -96,6 +96,19 @@ services:
       test: ["CMD", "pg_isready", "-h", "${AUTH_DATABASE_HOST}"]
       interval: 10s
       retries: 3
+  
+  notification-service:
+    image: pasarly-notification-service
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: services/notification/Dockerfile.app
+    container_name: ${NOTIFICATION_SERVICE_HOST}
+    networks:
+      - pasarly-net
+    restart: unless-stopped
+    env_file:
+      - .env
 
   # ---------- Redis ----------
   redis:
