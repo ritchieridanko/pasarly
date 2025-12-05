@@ -24,9 +24,10 @@ const (
 
 type AuthCreated struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Token         string                 `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
-	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Token         string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -61,6 +62,13 @@ func (*AuthCreated) Descriptor() ([]byte, []int) {
 	return file_v1_auth_event_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *AuthCreated) GetEventId() string {
+	if x != nil {
+		return x.EventId
+	}
+	return ""
+}
+
 func (x *AuthCreated) GetEmail() string {
 	if x != nil {
 		return x.Email
@@ -86,12 +94,13 @@ var File_v1_auth_event_proto protoreflect.FileDescriptor
 
 const file_v1_auth_event_proto_rawDesc = "" +
 	"\n" +
-	"\x13v1/auth_event.proto\x12\aauth.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"t\n" +
-	"\vAuthCreated\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\x12\x14\n" +
-	"\x05token\x18\x02 \x01(\tR\x05token\x129\n" +
+	"\x13v1/auth_event.proto\x12\aauth.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8f\x01\n" +
+	"\vAuthCreated\x12\x19\n" +
+	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x14\n" +
+	"\x05token\x18\x03 \x01(\tR\x05token\x129\n" +
 	"\n" +
-	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtBCZAgithub.com/ritchieridanko/pasarly/backend/shared/events/v1;eventsb\x06proto3"
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtBCZAgithub.com/ritchieridanko/pasarly/backend/shared/events/v1;eventsb\x06proto3"
 
 var (
 	file_v1_auth_event_proto_rawDescOnce sync.Once

@@ -66,7 +66,7 @@ services:
     volumes:
       - auth_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DATABASE_USER} -d ${AUTH_DATABASE_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U \"$AUTH_DATABASE_USER\" -d \"$AUTH_DATABASE_NAME\""]
       interval: 5s
       retries: 5
   
@@ -93,7 +93,7 @@ services:
         condition: service_healthy
     entrypoint: ["./bin/migrator"]
     healthcheck:
-      test: ["CMD", "pg_isready", "-h", "${AUTH_DATABASE_HOST}"]
+      test: ["CMD", "pg_isready", "-h", "\"$AUTH_DATABASE_HOST\""]
       interval: 10s
       retries: 3
   
@@ -109,6 +109,63 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      - DATABASE_HOST=${NOTIFICATION_DATABASE_HOST}
+      - DATABASE_PORT=${NOTIFICATION_DATABASE_PORT}
+      - DATABASE_USER=${NOTIFICATION_DATABASE_USER}
+      - DATABASE_PASS=${NOTIFICATION_DATABASE_PASS}
+      - DATABASE_NAME=${NOTIFICATION_DATABASE_NAME}
+    depends_on:
+      notification-database:
+        condition: service_healthy
+      notification-migrator:
+        condition: service_completed_successfully
+ 
+  notification-database:
+    image: postgres:16-alpine
+    container_name: ${NOTIFICATION_DATABASE_HOST}
+    networks:
+      - pasarly-net
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${NOTIFICATION_DATABASE_USER}
+      - POSTGRES_PASSWORD=${NOTIFICATION_DATABASE_PASS}
+      - POSTGRES_DB=${NOTIFICATION_DATABASE_NAME}
+    volumes:
+      - notification_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$NOTIFICATION_DATABASE_USER\" -d \"$NOTIFICATION_DATABASE_NAME\""]
+      interval: 5s
+      retries: 5
+  
+  notification-migrator:
+    image: pasarly-notification-migrator
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: services/notification/Dockerfile.migrator
+    container_name: notification-migrator
+    networks:
+      - pasarly-net
+    restart: "no"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=${NOTIFICATION_DATABASE_HOST}
+      - DATABASE_PORT=${NOTIFICATION_DATABASE_PORT}
+      - DATABASE_USER=${NOTIFICATION_DATABASE_USER}
+      - DATABASE_PASS=${NOTIFICATION_DATABASE_PASS}
+      - DATABASE_NAME=${NOTIFICATION_DATABASE_NAME}
+    depends_on:
+      notification-database:
+        condition: service_healthy
+    entrypoint: ["./bin/migrator"]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "\"$NOTIFICATION_DATABASE_HOST\""]
+      interval: 10s
+      retries: 3
 
   # ---------- Redis ----------
   redis:
@@ -121,7 +178,7 @@ services:
       - .env
     command: redis-server --requirepass "${CACHE_PASS}"
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${CACHE_PASS}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "\"$CACHE_PASS\"", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -165,7 +222,7 @@ services:
     volumes:
       - kafka1_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD", "nc", "-z", "${BROKER_1_HOST}", "9092"]
+      test: ["CMD", "nc", "-z", "\"$BROKER_1_HOST\"", "9092"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -190,7 +247,7 @@ services:
     volumes:
       - kafka2_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD", "nc", "-z", "${BROKER_2_HOST}", "9092"]
+      test: ["CMD", "nc", "-z", "\"$BROKER_2_HOST\"", "9092"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -215,7 +272,7 @@ services:
     volumes:
       - kafka3_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD", "nc", "-z", "${BROKER_3_HOST}", "9092"]
+      test: ["CMD", "nc", "-z", "\"$BROKER_3_HOST\"", "9092"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -242,6 +299,7 @@ networks:
 
 volumes:
   auth_db_data:
+  notification_db_data:
   kafka1_data:
   kafka2_data:
   kafka3_data:

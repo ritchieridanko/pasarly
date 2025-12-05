@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/redis/go-redis/v9"
 )
 
 // Internal error codes
@@ -40,10 +41,12 @@ const (
 
 // Internal errors
 var (
+	ErrCacheNil               error = redis.Nil
 	ErrDBAffectNoRows         error = errors.New("no rows affected")
 	ErrDBReturnNoRows         error = pgx.ErrNoRows
 	ErrEmailAlreadyRegistered error = errors.New("email already registered")
 	ErrEmailReserved          error = errors.New("email reserved")
+	ErrEventOnProcess         error = errors.New("message is being processed on another instance")
 	ErrInvalidToken           error = errors.New("invalid token")
 	ErrWrongSignInMethod      error = errors.New("wrong sign in method")
 )

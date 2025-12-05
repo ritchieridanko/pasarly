@@ -41,7 +41,7 @@ func main() {
 
 	go func(ctx context.Context, s *subscriber.Subscriber, h *handlers.AuthHandler) {
 		defer wg.Done()
-		if err := s.Listen(ctx, h.AuthCreated); err != nil {
+		if err := s.Listen(ctx, h.OnAuthCreated); err != nil {
 			log.Println("ERROR ->", err.Error())
 		}
 	}(ctx, container.SubAuthCreated(), container.AuthHandler())

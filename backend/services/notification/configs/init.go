@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	App    `mapstructure:"app"`
-	Client `mapstructure:"client"`
-	Broker `mapstructure:"broker"`
-	Mailer `mapstructure:"mailer"`
-	Tracer `mapstructure:"tracer"`
+	App      `mapstructure:"app"`
+	Client   `mapstructure:"client"`
+	Database `mapstructure:"database"`
+	Broker   `mapstructure:"broker"`
+	Mailer   `mapstructure:"mailer"`
+	Tracer   `mapstructure:"tracer"`
 }
 
 type App struct {
@@ -25,6 +27,20 @@ type Client struct {
 	BaseURL string `mapstructure:"base_url"`
 }
 
+type Database struct {
+	Host            string        `mapstructure:"host"`
+	Port            int           `mapstructure:"port"`
+	User            string        `mapstructure:"user"`
+	Pass            string        `mapstructure:"pass"`
+	Name            string        `mapstructure:"name"`
+	SSLMode         string        `mapstructure:"ssl_mode"`
+	MaxConns        int           `mapstructure:"max_conns"`
+	MinConns        int           `mapstructure:"min_conns"`
+	MaxConnLifetime time.Duration `mapstructure:"max_conn_lifetime"`
+	MaxConnIdleTime time.Duration `mapstructure:"max_conn_idle_time"`
+	DSN             string
+}
+
 type Broker struct {
 	Brokers     string `mapstructure:"brokers"`
 	MaxBytes    int    `mapstructure:"max_bytes"`
@@ -33,11 +49,12 @@ type Broker struct {
 }
 
 type Mailer struct {
-	Host string `mapstructure:"host"`
-	Port int    `mapstructure:"port"`
-	User string `mapstructure:"user"`
-	Pass string `mapstructure:"pass"`
-	From string `mapstructure:"from"`
+	Host    string        `mapstructure:"host"`
+	Port    int           `mapstructure:"port"`
+	User    string        `mapstructure:"user"`
+	Pass    string        `mapstructure:"pass"`
+	From    string        `mapstructure:"from"`
+	Timeout time.Duration `mapstructure:"timeout"`
 }
 
 type Tracer struct {
@@ -73,6 +90,15 @@ func Init(path string) (*Config, error) {
 	}
 
 	cfg.App.Env = env
+	cfg.Database.DSN = fmt.Sprintf(
+		"postgresql://%s:%s@%s:%d/%s?sslmode=%s",
+		cfg.Database.User,
+		cfg.Database.Pass,
+		cfg.Database.Host,
+		cfg.Database.Port,
+		cfg.Database.Name,
+		cfg.Database.SSLMode,
+	)
 	cfg.Tracer.Endpoint = fmt.Sprintf("%s:%d", cfg.Tracer.Host, cfg.Tracer.Port)
 
 	return &cfg, nil

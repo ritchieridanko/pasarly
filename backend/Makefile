@@ -17,6 +17,8 @@ docker-down:
 
 migrate-up:
 	docker compose run --rm auth-migrator -up
+	docker compose run --rm notification-migrator -up
 
 migrate-down:
 	docker compose run --rm auth-migrator -down 0
+	docker compose run --rm notification-migrator -down 0

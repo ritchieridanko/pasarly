@@ -7,22 +7,29 @@ import (
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/channels"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/handlers"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra"
+	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra/database"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra/logger"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra/mailer"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra/subscriber"
+	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/repositories"
 )
 
 type Container struct {
-	config *configs.Config
-	logger *logger.Logger
-	mailer *mailer.Mailer
-	acs    *subscriber.Subscriber
-	ec     channels.EmailChannel
-	ah     *handlers.AuthHandler
+	config     *configs.Config
+	database   *database.Database
+	transactor *database.Transactor
+	logger     *logger.Logger
+	mailer     *mailer.Mailer
+	acs        *subscriber.Subscriber
+	ec         channels.EmailChannel
+	er         repositories.EventRepository
+	ah         *handlers.AuthHandler
 }
 
 func Init(cfg *configs.Config, i *infra.Infra) (*Container, error) {
 	// Infra
+	db := database.NewDatabase(i.Database())
+	tx := database.NewTransactor(i.Database())
 	l := logger.NewLogger(i.Logger())
 	m := mailer.NewMailer(i.Mailer())
 
@@ -35,16 +42,22 @@ func Init(cfg *configs.Config, i *infra.Infra) (*Container, error) {
 		return nil, err
 	}
 
+	// Repositories
+	er := repositories.NewEventRepository(db)
+
 	// Handlers
-	ah := handlers.NewAuthHandler(ec)
+	ah := handlers.NewAuthHandler(er, ec, tx, cfg.Mailer.Timeout)
 
 	return &Container{
-		config: cfg,
-		logger: l,
-		mailer: m,
-		acs:    acs,
-		ec:     ec,
-		ah:     ah,
+		config:     cfg,
+		database:   db,
+		transactor: tx,
+		logger:     l,
+		mailer:     m,
+		acs:        acs,
+		ec:         ec,
+		er:         er,
+		ah:         ah,
 	}, nil
 }
 

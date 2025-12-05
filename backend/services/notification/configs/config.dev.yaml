@@ -4,6 +4,18 @@ app:
 client:
   base_url: "http://localhost:3000"
 
+database:
+  host: "localhost"
+  port: 5432
+  user: ""
+  pass: ""
+  name: "pasarly_notification_db"
+  ssl_mode: "disable"
+  max_conns: 5
+  min_conns: 1
+  max_conn_lifetime: "1h"
+  max_conn_idle_time: "30m"
+
 broker:
   brokers: "localhost:9092,localhost:9093,localhost:9094"
   max_bytes: 10000000
@@ -16,6 +28,7 @@ mailer:
   user: ""
   pass: ""
   from: ""
+  timeout: "10m"
 
 tracer:
   host: "localhost"
