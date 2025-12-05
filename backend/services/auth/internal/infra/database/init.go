@@ -11,28 +11,28 @@ import (
 )
 
 func Init(cfg *configs.Database, l *zap.Logger) (*pgxpool.Pool, error) {
-	poolCfg, err := pgxpool.ParseConfig(cfg.DSN)
+	c, err := pgxpool.ParseConfig(cfg.DSN)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build database connection config: %w", err)
+		return nil, fmt.Errorf("failed to initialize database: %w", err)
 	}
 
-	poolCfg.MaxConns = int32(cfg.MaxConns)
-	poolCfg.MinConns = int32(cfg.MinConns)
-	poolCfg.MaxConnLifetime = cfg.MaxConnLifetime
-	poolCfg.MaxConnIdleTime = cfg.MaxConnIdleTime
+	c.MaxConns = int32(cfg.MaxConns)
+	c.MinConns = int32(cfg.MinConns)
+	c.MaxConnLifetime = cfg.MaxConnLifetime
+	c.MaxConnIdleTime = cfg.MaxConnIdleTime
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	p, err := pgxpool.NewWithConfig(ctx, poolCfg)
+	pool, err := pgxpool.NewWithConfig(ctx, c)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create database connection pool: %w", err)
+		return nil, fmt.Errorf("failed to initialize database: %w", err)
 	}
-	if err := p.Ping(ctx); err != nil {
-		p.Close()
-		return nil, fmt.Errorf("failed to ping database: %w", err)
+	if err := pool.Ping(ctx); err != nil {
+		pool.Close()
+		return nil, fmt.Errorf("failed to initialize database: %w", err)
 	}
 
 	l.Sugar().Infof("✅ [DATABASE] initialized (host=%s, port=%d, name=%s)", cfg.Host, cfg.Port, cfg.Name)
-	return p, nil
+	return pool, nil
 }

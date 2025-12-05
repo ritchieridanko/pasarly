@@ -16,6 +16,7 @@ type Config struct {
 	Database `mapstructure:"database"`
 	Cache    `mapstructure:"cache"`
 	Broker   `mapstructure:"broker"`
+	Tracer   `mapstructure:"tracer"`
 }
 
 type App struct {
@@ -84,6 +85,12 @@ type Broker struct {
 	} `mapstructure:"timeout"`
 }
 
+type Tracer struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Endpoint string
+}
+
 func Init(path string) (*Config, error) {
 	if path == "" {
 		path = "./configs"
@@ -102,12 +109,12 @@ func Init(path string) (*Config, error) {
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	if err := v.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("failed to read config file: %w", err)
+		return nil, fmt.Errorf("failed to initialize config: %w", err)
 	}
 
 	var cfg Config
 	if err := v.UnmarshalExact(&cfg); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
+		return nil, fmt.Errorf("failed to initialize config: %w", err)
 	}
 
 	cfg.App.Env = env
@@ -120,6 +127,7 @@ func Init(path string) (*Config, error) {
 		cfg.Database.Name,
 		cfg.Database.SSLMode,
 	)
+	cfg.Tracer.Endpoint = fmt.Sprintf("%s:%d", cfg.Tracer.Host, cfg.Tracer.Port)
 
 	return &cfg, nil
 }

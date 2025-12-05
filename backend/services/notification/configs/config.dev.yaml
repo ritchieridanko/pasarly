@@ -28,7 +28,7 @@ mailer:
   user: ""
   pass: ""
   from: ""
-  timeout: "10m"
+  timeout: "1m"
 
 tracer:
   host: "localhost"

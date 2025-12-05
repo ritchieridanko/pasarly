@@ -83,9 +83,9 @@ func (u *authUsecase) SignUp(ctx context.Context, data *models.CreateAuth) (*mod
 			return ce.NewError(span, ce.CodeDataConflict, ce.MsgEmailAlreadyRegistered, e)
 		}
 
-		h, errH := u.bcrypt.Hash(*data.Password)
-		if errH != nil {
-			e := fmt.Errorf("failed to sign up: %w", errH)
+		h, eh := u.bcrypt.Hash(*data.Password)
+		if eh != nil {
+			e := fmt.Errorf("failed to sign up: %w", eh)
 			return ce.NewError(span, ce.CodeHashingFailed, ce.MsgInternalServer, e)
 		}
 
@@ -103,21 +103,22 @@ func (u *authUsecase) SignUp(ctx context.Context, data *models.CreateAuth) (*mod
 	}
 
 	// Create and store verification token in cache
-	verificationToken := utils.NewUUID().String()
-	if err := u.tr.CreateVerificationToken(ctx, auth.ID, verificationToken); err != nil {
+	token := utils.NewUUID().String()
+	if err := u.tr.CreateVerificationToken(ctx, auth.ID, token); err != nil {
 		u.logger.Sugar().Warnln(err.Error())
 		return auth, nil
 	}
 
-	// Publish auth.created event
-	ev := events.AuthCreated{
+	// Publish event
+	key := fmt.Sprintf("auth_%d", auth.ID)
+	evt := events.AuthCreated{
+		EventId:   utils.NewUUID().String(),
 		Email:     auth.Email,
-		Token:     verificationToken,
+		Token:     token,
 		CreatedAt: timestamppb.New(time.Now().UTC()),
 	}
-	evKey := fmt.Sprintf("auth_%d", auth.ID)
 
-	_ = u.acp.Publish(ctx, evKey, &ev) // failed to publish event does not fail SignUp process
+	_ = u.acp.Publish(ctx, key, &evt) // failed to publish event does not fail SignUp process
 
 	return auth, nil
 }

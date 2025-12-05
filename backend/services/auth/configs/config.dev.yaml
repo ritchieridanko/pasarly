@@ -45,3 +45,7 @@ broker:
   max_attempts: 3
   timeout:
     batch: "10ms"
+
+tracer:
+  host: "localhost"
+  port: 4317

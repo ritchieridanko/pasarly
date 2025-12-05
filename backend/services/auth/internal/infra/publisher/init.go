@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func Init(cfg *configs.Broker, topic string, l *zap.Logger) (*kafka.Writer, error) {
+func Init(cfg *configs.Broker, topic string, l *zap.Logger) *kafka.Writer {
 	b := strings.Split(cfg.Brokers, ",")
 
 	w := kafka.NewWriter(kafka.WriterConfig{
@@ -22,5 +22,5 @@ func Init(cfg *configs.Broker, topic string, l *zap.Logger) (*kafka.Writer, erro
 	})
 
 	l.Sugar().Infof("✅ [PUBLISHER] initialized (topic=%s, brokers=%s)", topic, cfg.Brokers)
-	return w, nil
+	return w
 }

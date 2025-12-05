@@ -31,6 +31,7 @@ func (t *Transactor) WithTx(ctx context.Context, fn func(context.Context) *ce.Er
 			e := fmt.Errorf("failed to begin database transaction: %w", err)
 			return ce.NewError(span, ce.CodeDBTx, ce.MsgInternalServer, e)
 		}
+
 		ctx = txToCtx(ctx, tx)
 		isNewTx = true
 	}

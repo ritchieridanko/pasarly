@@ -1,20 +1,17 @@
 package utils
 
-import (
-	"github.com/ritchieridanko/pasarly/backend/services/auth/configs"
-	"golang.org/x/crypto/bcrypt"
-)
+import "golang.org/x/crypto/bcrypt"
 
 type BCrypt struct {
-	config *configs.Auth
+	cost int
 }
 
-func NewBCrypt(cfg *configs.Auth) *BCrypt {
-	return &BCrypt{config: cfg}
+func NewBCrypt(cost int) *BCrypt {
+	return &BCrypt{cost: cost}
 }
 
 func (u *BCrypt) Hash(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), u.config.BCrypt.Cost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), u.cost)
 	if err != nil {
 		return "", err
 	}

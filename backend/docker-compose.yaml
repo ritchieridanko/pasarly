@@ -66,7 +66,7 @@ services:
     volumes:
       - auth_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$AUTH_DATABASE_USER\" -d \"$AUTH_DATABASE_NAME\""]
+      test: ["CMD-SHELL", "pg_isready -U ${AUTH_DATABASE_USER} -d ${AUTH_DATABASE_NAME}"]
       interval: 5s
       retries: 5
   
@@ -93,7 +93,7 @@ services:
         condition: service_healthy
     entrypoint: ["./bin/migrator"]
     healthcheck:
-      test: ["CMD", "pg_isready", "-h", "\"$AUTH_DATABASE_HOST\""]
+      test: ["CMD", "pg_isready", "-h", "${AUTH_DATABASE_HOST}"]
       interval: 10s
       retries: 3
   
@@ -136,7 +136,7 @@ services:
     volumes:
       - notification_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \"$NOTIFICATION_DATABASE_USER\" -d \"$NOTIFICATION_DATABASE_NAME\""]
+      test: ["CMD-SHELL", "pg_isready -U ${NOTIFICATION_DATABASE_USER} -d ${NOTIFICATION_DATABASE_NAME}"]
       interval: 5s
       retries: 5
   
@@ -163,7 +163,7 @@ services:
         condition: service_healthy
     entrypoint: ["./bin/migrator"]
     healthcheck:
-      test: ["CMD", "pg_isready", "-h", "\"$NOTIFICATION_DATABASE_HOST\""]
+      test: ["CMD", "pg_isready", "-h", "${NOTIFICATION_DATABASE_HOST}"]
       interval: 10s
       retries: 3
 
@@ -178,7 +178,7 @@ services:
       - .env
     command: redis-server --requirepass "${CACHE_PASS}"
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "\"$CACHE_PASS\"", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${CACHE_PASS}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -222,7 +222,7 @@ services:
     volumes:
       - kafka1_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD", "nc", "-z", "\"$BROKER_1_HOST\"", "9092"]
+      test: ["CMD", "nc", "-z", "${BROKER_1_HOST}", "9092"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -247,7 +247,7 @@ services:
     volumes:
       - kafka2_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD", "nc", "-z", "\"$BROKER_2_HOST\"", "9092"]
+      test: ["CMD", "nc", "-z", "${BROKER_2_HOST}", "9092"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -272,7 +272,7 @@ services:
     volumes:
       - kafka3_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD", "nc", "-z", "\"$BROKER_3_HOST\"", "9092"]
+      test: ["CMD", "nc", "-z", "${BROKER_3_HOST}", "9092"]
       interval: 10s
       timeout: 5s
       retries: 5

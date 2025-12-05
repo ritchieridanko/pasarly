@@ -7,7 +7,6 @@ import (
 
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/channels"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/constants"
-	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra/database"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/models"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/repositories"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/utils"
@@ -21,19 +20,13 @@ import (
 const authErrTracer string = "handler.auth"
 
 type AuthHandler struct {
-	timeout    time.Duration
-	er         repositories.EventRepository
-	ec         channels.EmailChannel
-	transactor *database.Transactor
+	timeout time.Duration
+	er      repositories.EventRepository
+	ec      channels.EmailChannel
 }
 
-func NewAuthHandler(
-	er repositories.EventRepository,
-	ec channels.EmailChannel,
-	tx *database.Transactor,
-	timeout time.Duration,
-) *AuthHandler {
-	return &AuthHandler{er: er, ec: ec, transactor: tx, timeout: timeout}
+func NewAuthHandler(er repositories.EventRepository, ec channels.EmailChannel, timeout time.Duration) *AuthHandler {
+	return &AuthHandler{er: er, ec: ec, timeout: timeout}
 }
 
 func (h *AuthHandler) OnAuthCreated(ctx context.Context, m kafka.Message) error {
@@ -47,39 +40,37 @@ func (h *AuthHandler) OnAuthCreated(ctx context.Context, m kafka.Message) error 
 		return e
 	}
 
-	return h.transactor.WithTx(ctx, func(ctx context.Context) error {
-		event, err := h.er.GetEventByID(ctx, evt.GetEventId())
-		if err != nil {
+	event, err := h.er.GetEventByID(ctx, evt.GetEventId())
+	if err != nil {
+		return err
+	}
+
+	// Idempotency check
+	if event == nil {
+		data := models.CreateEvent{
+			ID:   evt.GetEventId(),
+			Type: constants.EventTopicAuthCreated,
+		}
+
+		if err := h.er.CreateEvent(ctx, &data); err != nil {
 			return err
 		}
-
-		// Idempotency check
-		if event == nil {
-			data := models.CreateEvent{
-				ID:   evt.GetEventId(),
-				Type: constants.EventTopicAuthCreated,
-			}
-
-			if err := h.er.CreateEvent(ctx, &data); err != nil {
-				return err
-			}
-		}
-		if event != nil {
-			if event.CompletedAt != nil {
-				return nil // already completed -> skip
-			}
-
-			if time.Since(event.ProcessedAt).Seconds() < h.timeout.Seconds() {
-				e := fmt.Errorf("failed to handle message: %w", ce.ErrEventOnProcess)
-				utils.TraceErr(span, e, ce.MsgInternalServer)
-				return e
-			}
+	}
+	if event != nil {
+		if event.CompletedAt != nil {
+			return nil // already completed -> skip
 		}
 
-		if err := h.ec.SendWelcome(ctx, evt.GetEmail(), evt.GetToken()); err != nil {
-			return err
+		if time.Since(event.ProcessedAt).Seconds() < h.timeout.Seconds() {
+			e := fmt.Errorf("failed to handle message: %w", ce.ErrEventOnProcess)
+			utils.TraceErr(span, e, ce.MsgInternalServer)
+			return e
 		}
+	}
 
-		return h.er.SetCompleted(ctx, evt.GetEventId())
-	})
+	if err := h.ec.SendWelcome(ctx, evt.GetEmail(), evt.GetToken()); err != nil {
+		return err
+	}
+
+	return h.er.SetCompleted(ctx, evt.GetEventId())
 }

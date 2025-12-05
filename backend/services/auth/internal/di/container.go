@@ -15,37 +15,32 @@ import (
 )
 
 type Container struct {
-	config *configs.Config
-
-	logger     *logger.Logger
+	config     *configs.Config
 	cache      *cache.Cache
 	database   *database.Database
 	transactor *database.Transactor
-
-	acp *publisher.Publisher
-
-	ar repositories.AuthRepository
-	sr repositories.SessionRepository
-	tr repositories.TokenRepository
-
-	bcrypt    *utils.BCrypt
-	jwt       *utils.JWT
-	validator *utils.Validator
-
-	au usecases.AuthUsecase
-	su usecases.SessionUsecase
-
-	ah *handlers.AuthHandler
-
-	server *server.Server
+	logger     *logger.Logger
+	acp        *publisher.Publisher
+	ar         repositories.AuthRepository
+	sr         repositories.SessionRepository
+	tr         repositories.TokenRepository
+	bcrypt     *utils.BCrypt
+	jwt        *utils.JWT
+	validator  *utils.Validator
+	au         usecases.AuthUsecase
+	su         usecases.SessionUsecase
+	ah         *handlers.AuthHandler
+	server     *server.Server
 }
 
 func Init(cfg *configs.Config, i *infra.Infra) *Container {
 	// Infra
-	l := logger.NewLogger(i.Logger())
 	c := cache.NewCache(&cfg.Cache, i.Cache())
-	db := database.NewDatabase(i.DB())
-	tx := database.NewTransactor(i.DB())
+	db := database.NewDatabase(i.Database())
+	tx := database.NewTransactor(i.Database())
+	l := logger.NewLogger(i.Logger())
+
+	// Publishers
 	acp := publisher.NewPublisher(i.PubAuthCreated(), l)
 
 	// Repositories
@@ -54,13 +49,13 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 	tr := repositories.NewTokenRepository(&cfg.Auth, c)
 
 	// Utils
-	b := utils.NewBCrypt(&cfg.Auth)
-	j := utils.NewJWT(&cfg.Auth)
+	b := utils.NewBCrypt(cfg.Auth.BCrypt.Cost)
+	j := utils.NewJWT(cfg.Auth.JWT.Issuer, cfg.Auth.JWT.Secret, cfg.Auth.JWT.Duration)
 	v := utils.NewValidator()
 
 	// Usecases
 	au := usecases.NewAuthUsecase(ar, tr, tx, acp, b, v, l)
-	su := usecases.NewSessionUsecase(&cfg.Auth, sr, tx, j, v)
+	su := usecases.NewSessionUsecase(cfg.Auth.Token.Duration.Session, sr, tx, j, v)
 
 	// Handlers
 	ah := handlers.NewAuthHandler(au, su, l)
@@ -70,10 +65,10 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 
 	return &Container{
 		config:     cfg,
-		logger:     l,
 		cache:      c,
 		database:   db,
 		transactor: tx,
+		logger:     l,
 		acp:        acp,
 		ar:         ar,
 		sr:         sr,

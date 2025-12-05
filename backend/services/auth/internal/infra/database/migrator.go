@@ -19,20 +19,20 @@ type Migrator struct {
 func NewMigrator(cfg *configs.Database, path string) (*Migrator, error) {
 	db, err := sql.Open("pgx", cfg.DSN)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open database for migration: %w", err)
+		return nil, fmt.Errorf("failed to initialize migrator: %w", err)
 	}
 
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
-		return nil, fmt.Errorf("failed to create migration driver: %w", err)
+		return nil, fmt.Errorf("failed to initialize migrator: %w", err)
 	}
 
-	m, err := migrate.NewWithDatabaseInstance("file://"+path, cfg.Name, driver)
+	migrate, err := migrate.NewWithDatabaseInstance("file://"+path, cfg.Name, driver)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create migrator: %w", err)
+		return nil, fmt.Errorf("failed to initialize migrator: %w", err)
 	}
 
-	return &Migrator{config: cfg, migrate: m}, nil
+	return &Migrator{config: cfg, migrate: migrate}, nil
 }
 
 func (m *Migrator) Up() error {
@@ -58,12 +58,12 @@ func (m *Migrator) Down(steps int) error {
 }
 
 func (m *Migrator) Close() error {
-	errS, errDB := m.migrate.Close()
-	if errS != nil {
-		return fmt.Errorf("failed to close migration source: %w", errS)
+	es, ed := m.migrate.Close()
+	if es != nil {
+		return fmt.Errorf("failed to close migration source: %w", es)
 	}
-	if errDB != nil {
-		return fmt.Errorf("failed to close migration database: %w", errDB)
+	if ed != nil {
+		return fmt.Errorf("failed to close migration database: %w", ed)
 	}
 	return nil
 }

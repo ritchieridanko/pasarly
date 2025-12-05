@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ritchieridanko/pasarly/backend/services/auth/configs"
 	"github.com/ritchieridanko/pasarly/backend/services/auth/internal/infra/database"
 	"github.com/ritchieridanko/pasarly/backend/services/auth/internal/models"
 	"github.com/ritchieridanko/pasarly/backend/services/auth/internal/repositories"
@@ -23,7 +22,7 @@ type SessionUsecase interface {
 }
 
 type sessionUsecase struct {
-	config     *configs.Auth
+	duration   time.Duration
 	sr         repositories.SessionRepository
 	transactor *database.Transactor
 	jwt        *utils.JWT
@@ -31,13 +30,13 @@ type sessionUsecase struct {
 }
 
 func NewSessionUsecase(
-	cfg *configs.Auth,
+	d time.Duration,
 	sr repositories.SessionRepository,
 	tx *database.Transactor,
 	j *utils.JWT,
 	v *utils.Validator,
 ) SessionUsecase {
-	return &sessionUsecase{config: cfg, sr: sr, transactor: tx, jwt: j, validator: v}
+	return &sessionUsecase{duration: d, sr: sr, transactor: tx, jwt: j, validator: v}
 }
 
 func (u *sessionUsecase) CreateSession(ctx context.Context, auth *models.Auth, rm *models.RequestMeta) (*models.AuthToken, *ce.Error) {
@@ -47,9 +46,9 @@ func (u *sessionUsecase) CreateSession(ctx context.Context, auth *models.Auth, r
 	now := time.Now().UTC()
 	sessionToken := utils.NewUUID().String()
 
-	accessToken, errJ := u.jwt.Create(auth.ID, auth.Role, auth.IsVerified, &now)
-	if errJ != nil {
-		e := fmt.Errorf("failed to create session: %w", errJ)
+	accessToken, ej := u.jwt.Create(auth.ID, auth.Role, auth.IsVerified, &now)
+	if ej != nil {
+		e := fmt.Errorf("failed to create session: %w", ej)
 		return nil, ce.NewError(span, ce.CodeJWTCreationFailed, ce.MsgInternalServer, e)
 	}
 
@@ -57,7 +56,7 @@ func (u *sessionUsecase) CreateSession(ctx context.Context, auth *models.Auth, r
 		Token:     sessionToken,
 		UserAgent: rm.UserAgent,
 		IPAddress: rm.IPAddress,
-		ExpiresAt: now.Add(u.config.Token.Duration.Session),
+		ExpiresAt: now.Add(u.duration),
 	}
 
 	err := u.transactor.WithTx(ctx, func(ctx context.Context) *ce.Error {

@@ -15,21 +15,19 @@ import (
 )
 
 type Container struct {
-	config     *configs.Config
-	database   *database.Database
-	transactor *database.Transactor
-	logger     *logger.Logger
-	mailer     *mailer.Mailer
-	acs        *subscriber.Subscriber
-	ec         channels.EmailChannel
-	er         repositories.EventRepository
-	ah         *handlers.AuthHandler
+	config   *configs.Config
+	database *database.Database
+	logger   *logger.Logger
+	mailer   *mailer.Mailer
+	acs      *subscriber.Subscriber
+	ec       channels.EmailChannel
+	er       repositories.EventRepository
+	ah       *handlers.AuthHandler
 }
 
 func Init(cfg *configs.Config, i *infra.Infra) (*Container, error) {
 	// Infra
 	db := database.NewDatabase(i.Database())
-	tx := database.NewTransactor(i.Database())
 	l := logger.NewLogger(i.Logger())
 	m := mailer.NewMailer(i.Mailer())
 
@@ -46,18 +44,17 @@ func Init(cfg *configs.Config, i *infra.Infra) (*Container, error) {
 	er := repositories.NewEventRepository(db)
 
 	// Handlers
-	ah := handlers.NewAuthHandler(er, ec, tx, cfg.Mailer.Timeout)
+	ah := handlers.NewAuthHandler(er, ec, cfg.Mailer.Timeout)
 
 	return &Container{
-		config:     cfg,
-		database:   db,
-		transactor: tx,
-		logger:     l,
-		mailer:     m,
-		acs:        acs,
-		ec:         ec,
-		er:         er,
-		ah:         ah,
+		config:   cfg,
+		database: db,
+		logger:   l,
+		mailer:   m,
+		acs:      acs,
+		ec:       ec,
+		er:       er,
+		ah:       ah,
 	}, nil
 }
 
