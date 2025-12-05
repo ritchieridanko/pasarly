@@ -45,8 +45,17 @@ message SignOutRequest {
   string session = 1;
 }
 
+message EmailAvailabilityRequest {
+  string email = 1;
+}
+
+message EmailAvailabilityResponse {
+  bool is_available = 1;
+}
+
 service AuthService {
   rpc SignUp (SignUpRequest) returns (SignUpResponse);
   rpc SignIn (SignInRequest) returns (SignInResponse);
   rpc SignOut (SignOutRequest) returns (google.protobuf.Empty);
+  rpc IsEmailAvailable (EmailAvailabilityRequest) returns (EmailAvailabilityResponse);
 }

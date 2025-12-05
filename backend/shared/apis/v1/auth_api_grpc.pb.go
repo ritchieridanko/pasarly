@@ -20,9 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_SignUp_FullMethodName  = "/auth.v1.AuthService/SignUp"
-	AuthService_SignIn_FullMethodName  = "/auth.v1.AuthService/SignIn"
-	AuthService_SignOut_FullMethodName = "/auth.v1.AuthService/SignOut"
+	AuthService_SignUp_FullMethodName           = "/auth.v1.AuthService/SignUp"
+	AuthService_SignIn_FullMethodName           = "/auth.v1.AuthService/SignIn"
+	AuthService_SignOut_FullMethodName          = "/auth.v1.AuthService/SignOut"
+	AuthService_IsEmailAvailable_FullMethodName = "/auth.v1.AuthService/IsEmailAvailable"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -32,6 +33,7 @@ type AuthServiceClient interface {
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error)
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	SignOut(ctx context.Context, in *SignOutRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	IsEmailAvailable(ctx context.Context, in *EmailAvailabilityRequest, opts ...grpc.CallOption) (*EmailAvailabilityResponse, error)
 }
 
 type authServiceClient struct {
@@ -72,6 +74,16 @@ func (c *authServiceClient) SignOut(ctx context.Context, in *SignOutRequest, opt
 	return out, nil
 }
 
+func (c *authServiceClient) IsEmailAvailable(ctx context.Context, in *EmailAvailabilityRequest, opts ...grpc.CallOption) (*EmailAvailabilityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmailAvailabilityResponse)
+	err := c.cc.Invoke(ctx, AuthService_IsEmailAvailable_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -79,6 +91,7 @@ type AuthServiceServer interface {
 	SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error)
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	SignOut(context.Context, *SignOutRequest) (*empty.Empty, error)
+	IsEmailAvailable(context.Context, *EmailAvailabilityRequest) (*EmailAvailabilityResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -97,6 +110,9 @@ func (UnimplementedAuthServiceServer) SignIn(context.Context, *SignInRequest) (*
 }
 func (UnimplementedAuthServiceServer) SignOut(context.Context, *SignOutRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignOut not implemented")
+}
+func (UnimplementedAuthServiceServer) IsEmailAvailable(context.Context, *EmailAvailabilityRequest) (*EmailAvailabilityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsEmailAvailable not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -173,6 +189,24 @@ func _AuthService_SignOut_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_IsEmailAvailable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmailAvailabilityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).IsEmailAvailable(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_IsEmailAvailable_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).IsEmailAvailable(ctx, req.(*EmailAvailabilityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -191,6 +225,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SignOut",
 			Handler:    _AuthService_SignOut_Handler,
+		},
+		{
+			MethodName: "IsEmailAvailable",
+			Handler:    _AuthService_IsEmailAvailable_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -24,6 +24,7 @@ const authErrTracer string = "usecase.auth"
 type AuthUsecase interface {
 	SignUp(ctx context.Context, data *models.CreateAuth) (auth *models.Auth, err *ce.Error)
 	SignIn(ctx context.Context, data *models.GetAuth) (auth *models.Auth, err *ce.Error)
+	IsEmailAvailable(ctx context.Context, email string) (exists bool, err *ce.Error)
 }
 
 type authUsecase struct {
@@ -127,7 +128,7 @@ func (u *authUsecase) SignIn(ctx context.Context, data *models.GetAuth) (*models
 	ctx, span := otel.Tracer(authErrTracer).Start(ctx, "SignIn")
 	defer span.End()
 
-	// Validations
+	// Validation
 	if ok, why := u.validator.Email(&data.Email); !ok {
 		err := fmt.Errorf("failed to sign in: %w", errors.New(why))
 		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
@@ -149,4 +150,31 @@ func (u *authUsecase) SignIn(ctx context.Context, data *models.GetAuth) (*models
 	}
 
 	return auth, nil
+}
+
+func (u *authUsecase) IsEmailAvailable(ctx context.Context, email string) (bool, *ce.Error) {
+	ctx, span := otel.Tracer(authErrTracer).Start(ctx, "IsEmailAvailable")
+	defer span.End()
+
+	// Validation
+	if ok, why := u.validator.Email(&email); !ok {
+		err := fmt.Errorf("failed to check if email is available: %w", errors.New(why))
+		return false, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+
+	email = utils.NormalizeString(email)
+	exists, err := u.ar.IsEmailRegistered(ctx, email)
+	if err != nil {
+		return false, err
+	}
+	if exists {
+		return false, nil
+	}
+
+	exists, err = u.ar.IsEmailReserved(ctx, email)
+	if err != nil {
+		return false, err
+	}
+
+	return !exists, nil
 }

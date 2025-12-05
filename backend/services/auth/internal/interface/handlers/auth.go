@@ -143,3 +143,16 @@ func (h *AuthHandler) SignOut(ctx context.Context, req *apis.SignOutRequest) (*e
 
 	return &emptypb.Empty{}, nil
 }
+
+func (h *AuthHandler) IsEmailAvailable(ctx context.Context, req *apis.EmailAvailabilityRequest) (*apis.EmailAvailabilityResponse, error) {
+	ctx, span := otel.Tracer(authErrTracer).Start(ctx, "IsEmailAvailable")
+	defer span.End()
+
+	exists, err := h.au.IsEmailAvailable(ctx, req.GetEmail())
+	if err != nil {
+		h.logger.Sugar().Errorln(err.Error())
+		return nil, err.ToGRPCStatus()
+	}
+
+	return &apis.EmailAvailabilityResponse{IsAvailable: exists}, nil
+}
