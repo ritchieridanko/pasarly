@@ -74,12 +74,12 @@ func Init(path string) (*Config, error) {
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	if err := v.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("failed to read config file: %w", err)
+		return nil, fmt.Errorf("failed to initialize config: %w", err)
 	}
 
 	var cfg Config
 	if err := v.UnmarshalExact(&cfg); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
+		return nil, fmt.Errorf("failed to initialize config: %w", err)
 	}
 
 	cfg.App.Env = env

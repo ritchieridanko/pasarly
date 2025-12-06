@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ritchieridanko/pasarly/backend/services/gateway/configs"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/constants"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/interface/dtos"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/utils"
@@ -19,13 +19,13 @@ import (
 const authErrTracer string = "handler.auth"
 
 type AuthHandler struct {
-	config *configs.Config
-	as     apis.AuthServiceClient
-	cookie *utils.Cookie
+	session time.Duration
+	as      apis.AuthServiceClient
+	cookie  *utils.Cookie
 }
 
-func NewAuthHandler(cfg *configs.Config, as apis.AuthServiceClient, c *utils.Cookie) *AuthHandler {
-	return &AuthHandler{config: cfg, as: as, cookie: c}
+func NewAuthHandler(as apis.AuthServiceClient, c *utils.Cookie, session time.Duration) *AuthHandler {
+	return &AuthHandler{session: session, as: as, cookie: c}
 }
 
 func (h *AuthHandler) SignUp(ctx *gin.Context) {
@@ -58,8 +58,8 @@ func (h *AuthHandler) SignUp(ctx *gin.Context) {
 	h.cookie.Set(
 		ctx,
 		constants.CookieKeySession,
-		resp.GetToken().Session,
-		h.config.Duration.Session,
+		resp.GetToken().GetSession(),
+		h.session,
 		"/",
 	)
 
@@ -111,8 +111,8 @@ func (h *AuthHandler) SignIn(ctx *gin.Context) {
 	h.cookie.Set(
 		ctx,
 		constants.CookieKeySession,
-		resp.GetToken().Session,
-		h.config.Duration.Session,
+		resp.GetToken().GetSession(),
+		h.session,
 		"/",
 	)
 
@@ -163,4 +163,29 @@ func (h *AuthHandler) SignOut(ctx *gin.Context) {
 
 	h.cookie.Unset(ctx, constants.CookieKeySession, "/")
 	utils.SendResponse[any](ctx, http.StatusNoContent, "", nil)
+}
+
+func (h *AuthHandler) IsEmailAvailable(ctx *gin.Context) {
+	c, span := otel.Tracer(authErrTracer).Start(ctx.Request.Context(), "IsEmailAvailable")
+	defer span.End()
+
+	var params dtos.EmailAvailabilityRequest
+	if err := ctx.ShouldBindQuery(&params); err != nil {
+		e := fmt.Errorf("failed to check if email is available: %w", err)
+		ctx.Error(ce.NewError(span, ce.CodeInvalidParams, ce.MsgInvalidParams, e))
+		return
+	}
+
+	resp, err := h.as.IsEmailAvailable(c, &apis.EmailAvailabilityRequest{Email: params.Email})
+	if err != nil {
+		ctx.Error(ce.FromGRPCErr(span, err))
+		return
+	}
+
+	utils.SendResponse(
+		ctx, http.StatusOK, "ok",
+		dtos.EmailAvailabilityResponse{
+			IsAvailable: resp.GetIsAvailable(),
+		},
+	)
 }

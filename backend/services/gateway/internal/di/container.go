@@ -12,12 +12,9 @@ import (
 
 type Container struct {
 	config *configs.Config
-
 	logger *logger.Logger
 	cookie *utils.Cookie
-
-	ah *handlers.AuthHandler
-
+	ah     *handlers.AuthHandler
 	router *router.Router
 	server *server.Server
 }
@@ -27,13 +24,13 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 	l := logger.NewLogger(i.Logger())
 
 	// Utils
-	c := utils.NewCookie(cfg, true)
+	c := utils.NewCookie(cfg.App.Env, cfg.Server.Host, true)
 
 	// Handlers
-	ah := handlers.NewAuthHandler(cfg, i.AuthService(), c)
+	ah := handlers.NewAuthHandler(i.AuthService(), c, cfg.Duration.Session)
 
 	// Router
-	r := router.Init(cfg, l, ah)
+	r := router.Init(l, ah, cfg.App.Name, cfg.JWT.Secret)
 
 	// Server
 	s := server.Init(&cfg.Server, r.Router(), l)

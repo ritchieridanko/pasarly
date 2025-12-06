@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ritchieridanko/pasarly/backend/services/gateway/configs"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -17,13 +16,13 @@ type Tracer struct {
 	Cleanup func()
 }
 
-func Init(cfg *configs.Config, l *zap.Logger) (*Tracer, error) {
+func Init(appName, endpoint string, l *zap.Logger) (*Tracer, error) {
 	ctx := context.Background()
 
 	exporter, err := otlptracegrpc.New(
 		ctx,
 		otlptracegrpc.WithInsecure(),
-		otlptracegrpc.WithEndpoint(cfg.Tracer.Endpoint),
+		otlptracegrpc.WithEndpoint(endpoint),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize tracer: %w", err)
@@ -34,13 +33,13 @@ func Init(cfg *configs.Config, l *zap.Logger) (*Tracer, error) {
 		trace.WithResource(
 			resource.NewWithAttributes(
 				semconv.SchemaURL,
-				semconv.ServiceName(cfg.App.Name),
+				semconv.ServiceName(appName),
 			),
 		),
 	)
 
 	otel.SetTracerProvider(tp)
 
-	l.Sugar().Infof("✅ [TRACER] initialized (endpoint=%s)", cfg.Endpoint)
+	l.Sugar().Infof("✅ [TRACER] initialized (endpoint=%s)", endpoint)
 	return &Tracer{Cleanup: func() { _ = tp.Shutdown(ctx) }}, nil
 }

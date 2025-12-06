@@ -4,25 +4,23 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ritchieridanko/pasarly/backend/services/gateway/configs"
 )
 
 type Cookie struct {
-	config   *configs.Config
 	domain   string
 	isSecure bool
 	httpOnly bool
 }
 
-func NewCookie(cfg *configs.Config, httpOnly bool) *Cookie {
-	isProd := NormalizeString(cfg.App.Env) == "prod"
+func NewCookie(env, serverHost string, httpOnly bool) *Cookie {
+	isProd := NormalizeString(env) == "prod"
 
 	domain := ""
 	if isProd {
-		domain = cfg.Server.Host
+		domain = serverHost
 	}
 
-	return &Cookie{config: cfg, domain: domain, isSecure: isProd, httpOnly: httpOnly}
+	return &Cookie{domain: domain, isSecure: isProd, httpOnly: httpOnly}
 }
 
 func (u *Cookie) Set(ctx *gin.Context, name, value string, d time.Duration, path string) {

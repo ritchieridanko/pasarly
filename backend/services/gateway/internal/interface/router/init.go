@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ritchieridanko/pasarly/backend/services/gateway/configs"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/infra/logger"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/interface/handlers"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/interface/middlewares"
@@ -12,13 +11,12 @@ import (
 )
 
 type Router struct {
-	config *configs.Config
 	router *gin.Engine
 }
 
-func Init(cfg *configs.Config, l *logger.Logger, ah *handlers.AuthHandler) *Router {
+func Init(l *logger.Logger, ah *handlers.AuthHandler, appName, jwtSecret string) *Router {
 	r := gin.New()
-	r.Use(otelgin.Middleware(cfg.App.Name))
+	r.Use(otelgin.Middleware(appName))
 	r.Use(gin.Recovery())
 	r.Use(middlewares.Logger(l))
 
@@ -33,17 +31,16 @@ func Init(cfg *configs.Config, l *logger.Logger, ah *handlers.AuthHandler) *Rout
 
 	v1 := r.Group("/api/v1", middlewares.NewRequestID())
 
-	secret := cfg.JWT.Secret
-
 	// Auth
 	auth := v1.Group("/auth")
 	{
+		auth.GET("/email/available", ah.IsEmailAvailable)
 		auth.POST("/sign-up", ah.SignUp)
 		auth.POST("/sign-in", ah.SignIn)
-		auth.POST("/sign-out", middlewares.Authenticate(secret), ah.SignOut)
+		auth.POST("/sign-out", middlewares.Authenticate(jwtSecret), ah.SignOut)
 	}
 
-	return &Router{config: cfg, router: r}
+	return &Router{router: r}
 }
 
 func (r *Router) Router() *gin.Engine {

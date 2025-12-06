@@ -19,12 +19,12 @@ type Infra struct {
 }
 
 func Init(cfg *configs.Config) (*Infra, error) {
-	l, err := logger.Init(&cfg.App)
+	l, err := logger.Init(cfg.App.Env)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err := tracer.Init(cfg, l)
+	t, err := tracer.Init(cfg.App.Name, cfg.Tracer.Endpoint, l)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (i *Infra) AuthService() apis.AuthServiceClient {
 
 func (i *Infra) Close() error {
 	if err := i.logger.Sync(); err != nil {
-		return fmt.Errorf("failed to flush logger: %w", err)
+		return fmt.Errorf("failed to close logger: %w", err)
 	}
 
 	i.tracer.Cleanup()

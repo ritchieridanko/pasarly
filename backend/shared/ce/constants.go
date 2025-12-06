@@ -20,6 +20,7 @@ const (
 	CodeHashingFailed      errCode = "HASHING_FAILED_ERR"
 	CodeInternal           errCode = "INTERNAL_ERR"
 	CodeInvalidCredentials errCode = "INVALID_CREDENTIALS_ERR"
+	CodeInvalidParams      errCode = "INVALID_PARAMS_ERR"
 	CodeInvalidPayload     errCode = "INVALID_PAYLOAD_ERR"
 	CodeInvalidToken       errCode = "INVALID_TOKEN_ERR"
 	CodeSessionNotFound    errCode = "SESSION_NOT_FOUND_ERR"
@@ -35,6 +36,7 @@ const (
 	MsgEmailAlreadyRegistered string = "Email is already registered"
 	MsgInternalServer         string = "Internal server error"
 	MsgInvalidCredentials     string = "Invalid credentials"
+	MsgInvalidParams          string = "Invalid params"
 	MsgInvalidPayload         string = "Invalid payload"
 	MsgUnauthenticated        string = "Unauthenticated"
 )

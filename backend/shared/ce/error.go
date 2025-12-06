@@ -49,7 +49,7 @@ func (e *Error) ToGRPCStatus() error {
 
 func (e *Error) ToHTTPStatus() int {
 	switch e.Code {
-	case CodeInvalidPayload:
+	case CodeInvalidParams, CodeInvalidPayload:
 		return http.StatusBadRequest
 	case
 		CodeCookieNotFound,

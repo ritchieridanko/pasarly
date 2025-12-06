@@ -3,15 +3,14 @@ package logger
 import (
 	"fmt"
 
-	"github.com/ritchieridanko/pasarly/backend/services/gateway/configs"
 	"go.uber.org/zap"
 )
 
-func Init(cfg *configs.App) (*zap.Logger, error) {
+func Init(env string) (*zap.Logger, error) {
 	var l *zap.Logger
 	var err error
 
-	if cfg.Env == "prod" {
+	if env == "prod" {
 		l, err = zap.NewProduction(zap.AddCaller())
 	} else {
 		l, err = zap.NewDevelopment(zap.AddCaller())
@@ -21,6 +20,6 @@ func Init(cfg *configs.App) (*zap.Logger, error) {
 		return nil, fmt.Errorf("failed to initialize logger: %w", err)
 	}
 
-	l.Sugar().Infof("✅ [LOGGER] initialized (env=%s, level=%s)", cfg.Env, l.Level().String())
+	l.Sugar().Infof("✅ [LOGGER] initialized (env=%s, level=%s)", env, l.Level().String())
 	return l, nil
 }

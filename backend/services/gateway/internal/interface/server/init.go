@@ -16,10 +16,8 @@ type Server struct {
 }
 
 func Init(cfg *configs.Server, h http.Handler, l *logger.Logger) *Server {
-	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
-
 	s := &http.Server{
-		Addr:         addr,
+		Addr:         fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
 		Handler:      h,
 		ReadTimeout:  cfg.Timeout.Read,
 		WriteTimeout: cfg.Timeout.Write,

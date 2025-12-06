@@ -30,3 +30,11 @@ type SignInResponse struct {
 	AccessToken string `json:"access_token"`
 	Auth        Auth   `json:"auth"`
 }
+
+type EmailAvailabilityRequest struct {
+	Email string `form:"email" binding:"required"`
+}
+
+type EmailAvailabilityResponse struct {
+	IsAvailable bool `json:"is_available"`
+}
