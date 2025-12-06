@@ -1,0 +1,14 @@
+app:
+  name: "USER-SERVICE"
+
+database:
+  host: "localhost"
+  port: 5432
+  user: ""
+  pass: ""
+  name: "pasarly_user_db"
+  ssl_mode: "disable"
+  max_conns: 5
+  min_conns: 1
+  max_conn_lifetime: "1h"
+  max_conn_idle_time: "30m"

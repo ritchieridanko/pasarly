@@ -97,6 +97,52 @@ services:
       interval: 10s
       retries: 3
   
+  user-database:
+    image: postgis/postgis:16-3.4
+    container_name: ${USER_DATABASE_HOST}
+    networks:
+      - pasarly-net
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${USER_DATABASE_USER}
+      - POSTGRES_PASSWORD=${USER_DATABASE_PASS}
+      - POSTGRES_DB=${USER_DATABASE_NAME}
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${USER_DATABASE_USER} -d ${USER_DATABASE_NAME}"]
+      interval: 5s
+      retries: 5
+  
+  user-migrator:
+    image: pasarly-user-migrator
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: services/user/Dockerfile.migrator
+    container_name: user-migrator
+    networks:
+      - pasarly-net
+    restart: "no"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=${USER_DATABASE_HOST}
+      - DATABASE_PORT=${USER_DATABASE_PORT}
+      - DATABASE_USER=${USER_DATABASE_USER}
+      - DATABASE_PASS=${USER_DATABASE_PASS}
+      - DATABASE_NAME=${USER_DATABASE_NAME}
+    depends_on:
+      user-database:
+        condition: service_healthy
+    entrypoint: ["./bin/migrator"]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "${USER_DATABASE_HOST}"]
+      interval: 10s
+      retries: 3
+
   notification-service:
     image: pasarly-notification-service
     platform: linux/amd64
@@ -166,7 +212,7 @@ services:
       test: ["CMD", "pg_isready", "-h", "${NOTIFICATION_DATABASE_HOST}"]
       interval: 10s
       retries: 3
-
+  
   # ---------- Redis ----------
   redis:
     image: redis:7.4-alpine
@@ -299,6 +345,7 @@ networks:
 
 volumes:
   auth_db_data:
+  user_db_data:
   notification_db_data:
   kafka1_data:
   kafka2_data:

@@ -40,12 +40,14 @@ docker-up:
 	docker compose up -d
 
 docker-down:
-	docker compose down
+	docker compose down -v
 
 migrate-up:
 	docker compose run --rm auth-migrator -up
+	docker compose run --rm user-migrator -up
 	docker compose run --rm notification-migrator -up
 
 migrate-down:
 	docker compose run --rm auth-migrator -down 0
+	docker compose run --rm user-migrator -down 0
 	docker compose run --rm notification-migrator -down 0

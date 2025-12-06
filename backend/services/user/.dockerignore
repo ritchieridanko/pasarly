@@ -1,0 +1,4 @@
+bin/
+*.out
+*.md
+Dockerfile.migrator
