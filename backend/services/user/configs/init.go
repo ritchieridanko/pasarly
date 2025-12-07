@@ -12,6 +12,8 @@ import (
 type Config struct {
 	App      `mapstructure:"app"`
 	Database `mapstructure:"database"`
+	Broker   `mapstructure:"broker"`
+	Tracer   `mapstructure:"tracer"`
 }
 
 type App struct {
@@ -31,6 +33,19 @@ type Database struct {
 	MaxConnLifetime time.Duration `mapstructure:"max_conn_lifetime"`
 	MaxConnIdleTime time.Duration `mapstructure:"max_conn_idle_time"`
 	DSN             string
+}
+
+type Broker struct {
+	Brokers     string `mapstructure:"brokers"`
+	MaxBytes    int    `mapstructure:"max_bytes"`
+	MaxAttempts int    `mapstructure:"max_attempts"`
+	BaseDelay   int    `mapstructure:"base_delay"`
+}
+
+type Tracer struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Endpoint string
 }
 
 func Init(path string) (*Config, error) {
@@ -69,6 +84,7 @@ func Init(path string) (*Config, error) {
 		cfg.Database.Name,
 		cfg.Database.SSLMode,
 	)
+	cfg.Tracer.Endpoint = fmt.Sprintf("%s:%d", cfg.Tracer.Host, cfg.Tracer.Port)
 
 	return &cfg, nil
 }

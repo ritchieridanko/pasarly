@@ -12,3 +12,13 @@ database:
   min_conns: 1
   max_conn_lifetime: "1h"
   max_conn_idle_time: "30m"
+
+broker:
+  brokers: "localhost:9092,localhost:9093,localhost:9094"
+  max_bytes: 10000000
+  max_attempts: 3
+  base_delay: 100
+
+tracer:
+  host: "localhost"
+  port: 4317

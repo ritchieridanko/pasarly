@@ -25,9 +25,10 @@ const (
 type AuthCreated struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
-	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	Token         string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
-	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	AuthId        int64                  `protobuf:"varint,2,opt,name=auth_id,json=authId,proto3" json:"auth_id,omitempty"`
+	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	Token         string                 `protobuf:"bytes,4,opt,name=token,proto3" json:"token,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -69,6 +70,13 @@ func (x *AuthCreated) GetEventId() string {
 	return ""
 }
 
+func (x *AuthCreated) GetAuthId() int64 {
+	if x != nil {
+		return x.AuthId
+	}
+	return 0
+}
+
 func (x *AuthCreated) GetEmail() string {
 	if x != nil {
 		return x.Email
@@ -94,13 +102,14 @@ var File_v1_auth_event_proto protoreflect.FileDescriptor
 
 const file_v1_auth_event_proto_rawDesc = "" +
 	"\n" +
-	"\x13v1/auth_event.proto\x12\aauth.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8f\x01\n" +
+	"\x13v1/auth_event.proto\x12\aauth.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa8\x01\n" +
 	"\vAuthCreated\x12\x19\n" +
-	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12\x14\n" +
-	"\x05email\x18\x02 \x01(\tR\x05email\x12\x14\n" +
-	"\x05token\x18\x03 \x01(\tR\x05token\x129\n" +
+	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12\x17\n" +
+	"\aauth_id\x18\x02 \x01(\x03R\x06authId\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\x12\x14\n" +
+	"\x05token\x18\x04 \x01(\tR\x05token\x129\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtBCZAgithub.com/ritchieridanko/pasarly/backend/shared/events/v1;eventsb\x06proto3"
+	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAtBCZAgithub.com/ritchieridanko/pasarly/backend/shared/events/v1;eventsb\x06proto3"
 
 var (
 	file_v1_auth_event_proto_rawDescOnce sync.Once

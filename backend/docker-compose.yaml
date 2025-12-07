@@ -97,6 +97,30 @@ services:
       interval: 10s
       retries: 3
   
+  user-service:
+    image: pasarly-user-service
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: services/user/Dockerfile.app
+    container_name: ${USER_SERVICE_HOST}
+    networks:
+      - pasarly-net
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=${USER_DATABASE_HOST}
+      - DATABASE_PORT=${USER_DATABASE_PORT}
+      - DATABASE_USER=${USER_DATABASE_USER}
+      - DATABASE_PASS=${USER_DATABASE_PASS}
+      - DATABASE_NAME=${USER_DATABASE_NAME}
+    depends_on:
+      user-database:
+        condition: service_healthy
+      user-migrator:
+        condition: service_completed_successfully
+
   user-database:
     image: postgis/postgis:16-3.4
     container_name: ${USER_DATABASE_HOST}

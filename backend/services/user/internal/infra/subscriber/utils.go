@@ -1,0 +1,25 @@
+package subscriber
+
+import (
+	"context"
+	"errors"
+	"time"
+)
+
+func backoffWait(ctx context.Context, baseDelay, attempt int) error {
+	backoff := time.Duration(baseDelay) * (1 << attempt)
+
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-time.After(backoff):
+		return nil
+	}
+}
+
+func isRetryable(err error) bool {
+	if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
+		return false
+	}
+	return true
+}
