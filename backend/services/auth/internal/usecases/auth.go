@@ -114,6 +114,7 @@ func (u *authUsecase) SignUp(ctx context.Context, data *models.CreateAuth) (*mod
 	key := fmt.Sprintf("auth_%d", auth.ID)
 	evt := events.AuthCreated{
 		EventId:   utils.NewUUID().String(),
+		AuthId:    auth.ID,
 		Email:     auth.Email,
 		Token:     token,
 		CreatedAt: timestamppb.New(time.Now().UTC()),

@@ -110,6 +110,8 @@ services:
     env_file:
       - .env
     environment:
+      - SERVER_HOST=${USER_SERVICE_HOST}
+      - SERVER_PORT=${USER_SERVICE_PORT}
       - DATABASE_HOST=${USER_DATABASE_HOST}
       - DATABASE_PORT=${USER_DATABASE_PORT}
       - DATABASE_USER=${USER_DATABASE_USER}

@@ -15,6 +15,7 @@ const userErrTracer string = "repository.user"
 
 type UserRepository interface {
 	CreateUser(ctx context.Context, data *models.CreateUser) (user *models.User, err *ce.Error)
+	UpsertUser(ctx context.Context, data *models.UpsertUser) (user *models.User, err *ce.Error)
 	Exists(ctx context.Context, authID int64) (exists bool, err *ce.Error)
 }
 
@@ -48,6 +49,46 @@ func (r *userRepository) CreateUser(ctx context.Context, data *models.CreateUser
 	)
 	if err != nil {
 		e := fmt.Errorf("failed to create user: %w", err)
+		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+
+	return &user, nil
+}
+
+func (r *userRepository) UpsertUser(ctx context.Context, data *models.UpsertUser) (*models.User, *ce.Error) {
+	ctx, span := otel.Tracer(userErrTracer).Start(ctx, "UpsertUser")
+	defer span.End()
+
+	query := `
+		INSERT INTO users
+			(auth_id, user_id, name, bio, sex, birthdate, phone)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		ON CONFLICT (auth_id)
+		DO UPDATE SET
+			name = EXCLUDED.name,
+			bio = EXCLUDED.bio,
+			sex = EXCLUDED.sex,
+			birthdate = EXCLUDED.birthdate,
+			phone = EXCLUDED.phone,
+			updated_at = NOW()
+		RETURNING
+			user_id, name, bio, sex, birthdate, phone, profile_picture,
+			created_at, updated_at
+	`
+
+	row := r.database.QueryRow(
+		ctx, query,
+		data.AuthID, data.UserID, data.Name, data.Bio, data.Sex, data.Birthdate, data.Phone,
+	)
+
+	var user models.User
+	err := row.Scan(
+		&user.ID, &user.Name, &user.Bio, &user.Sex,
+		&user.Birthdate, &user.Phone, &user.ProfilePicture,
+		&user.CreatedAt, &user.UpdatedAt,
+	)
+	if err != nil {
+		e := fmt.Errorf("failed to upsert user: %w", err)
 		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
 	}
 

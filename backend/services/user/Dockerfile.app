@@ -25,4 +25,5 @@ WORKDIR /root
 COPY --from=builder /app/services/user/bin ./bin
 COPY --from=builder /app/services/user/configs ./configs
 
+EXPOSE 50052
 ENTRYPOINT ["./bin/app"]

@@ -11,6 +11,7 @@ import (
 
 type Config struct {
 	App      `mapstructure:"app"`
+	Server   `mapstructure:"server"`
 	Database `mapstructure:"database"`
 	Broker   `mapstructure:"broker"`
 	Tracer   `mapstructure:"tracer"`
@@ -19,6 +20,17 @@ type Config struct {
 type App struct {
 	Name string `mapstructure:"name"`
 	Env  string
+}
+
+type Server struct {
+	Host string `mapstructure:"host"`
+	Port int    `mapstructure:"port"`
+
+	Timeout struct {
+		Read     time.Duration `mapstructure:"read"`
+		Write    time.Duration `mapstructure:"write"`
+		Shutdown time.Duration `mapstructure:"shutdown"`
+	} `mapstructure:"timeout"`
 }
 
 type Database struct {

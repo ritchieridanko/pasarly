@@ -39,6 +39,7 @@ func main() {
 	var wg sync.WaitGroup
 	wg.Add(1)
 
+	// Run the subscribers
 	go func(ctx context.Context, s *subscriber.Subscriber, h *handlers.AuthHandler) {
 		defer wg.Done()
 		if err := s.Listen(ctx, h.OnAuthCreated); err != nil {

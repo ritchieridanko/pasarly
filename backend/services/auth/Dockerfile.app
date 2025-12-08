@@ -19,7 +19,7 @@ RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o bin/app cmd/app/main.go
 # ---------- Runtime Stage ----------
 FROM alpine:3.20
 
-RUN apk --no-cache add ca-certificates postgresql-client
+RUN apk --no-cache add ca-certificates
 WORKDIR /root
 
 COPY --from=builder /app/services/auth/bin ./bin

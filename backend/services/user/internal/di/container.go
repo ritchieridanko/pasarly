@@ -6,8 +6,12 @@ import (
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/infra/database"
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/infra/logger"
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/infra/subscriber"
+	"github.com/ritchieridanko/pasarly/backend/services/user/internal/interface/handlers"
+	"github.com/ritchieridanko/pasarly/backend/services/user/internal/interface/server"
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/processors"
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/repositories"
+	"github.com/ritchieridanko/pasarly/backend/services/user/internal/usecases"
+	"github.com/ritchieridanko/pasarly/backend/services/user/internal/utils"
 )
 
 type Container struct {
@@ -18,6 +22,10 @@ type Container struct {
 	acs        *subscriber.Subscriber
 	ur         repositories.UserRepository
 	up         processors.UserProcessor
+	validator  *utils.Validator
+	uu         usecases.UserUsecase
+	uh         *handlers.UserHandler
+	server     *server.Server
 }
 
 func Init(cfg *configs.Config, i *infra.Infra) *Container {
@@ -35,6 +43,18 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 	// Processors
 	up := processors.NewUserProcessor(ur, tx)
 
+	// Utils
+	v := utils.NewValidator()
+
+	// Usecases
+	uu := usecases.NewUserUsecase(ur, v)
+
+	// Handlers
+	uh := handlers.NewUserHandler(uu, l)
+
+	// Server
+	s := server.Init(&cfg.Server, uh, l)
+
 	return &Container{
 		config:     cfg,
 		database:   db,
@@ -43,6 +63,10 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 		acs:        acs,
 		ur:         ur,
 		up:         up,
+		validator:  v,
+		uu:         uu,
+		uh:         uh,
+		server:     s,
 	}
 }
 
@@ -52,4 +76,8 @@ func (c *Container) SubAuthCreated() *subscriber.Subscriber {
 
 func (c *Container) UserProcessor() processors.UserProcessor {
 	return c.up
+}
+
+func (c *Container) Server() *server.Server {
+	return c.server
 }

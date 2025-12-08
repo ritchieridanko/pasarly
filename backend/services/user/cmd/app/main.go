@@ -12,6 +12,7 @@ import (
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/di"
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/infra"
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/infra/subscriber"
+	"github.com/ritchieridanko/pasarly/backend/services/user/internal/interface/server"
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/processors"
 )
 
@@ -28,6 +29,14 @@ func main() {
 	defer i.Close()
 
 	container := di.Init(cfg, i)
+	s := container.Server()
+
+	// Run the server
+	go func(s *server.Server) {
+		if err := s.Start(); err != nil {
+			log.Fatalln("FATAL ->", err.Error())
+		}
+	}(s)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -35,6 +44,7 @@ func main() {
 	var wg sync.WaitGroup
 	wg.Add(1)
 
+	// Run the subscribers
 	go func(ctx context.Context, s *subscriber.Subscriber, p processors.UserProcessor) {
 		defer wg.Done()
 		if err := s.Listen(ctx, p.OnAuthCreated); err != nil {
@@ -48,6 +58,13 @@ func main() {
 
 	<-quit
 	log.Printf("🛑 [%s] is shutting down...", cfg.App.Name)
-	cancel()
+
+	sdCtx, sdCancel := context.WithTimeout(context.Background(), cfg.Server.Timeout.Shutdown)
+	defer sdCancel()
+
+	if err := s.Shutdown(sdCtx); err != nil {
+		log.Fatalln("FATAL ->", err.Error())
+	}
+
 	wg.Wait()
 }

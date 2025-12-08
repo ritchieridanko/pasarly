@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/ritchieridanko/pasarly/backend/shared/apis/v1;apis";
+
+message User {
+  string id = 1;
+  string name = 2;
+  google.protobuf.StringValue bio = 3;
+  google.protobuf.StringValue sex = 4;
+  google.protobuf.Timestamp birthdate = 5;
+  google.protobuf.StringValue phone = 6;
+  google.protobuf.StringValue profile_picture = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message UpsertUserRequest {
+  int64 auth_id = 1;
+  string name = 2;
+  google.protobuf.StringValue bio = 3;
+  google.protobuf.StringValue sex = 4;
+  google.protobuf.Timestamp birthdate = 5;
+  google.protobuf.StringValue phone = 6;
+}
+
+message UpsertUserResponse {
+  User user = 1;
+}
+
+service UserService {
+  rpc UpsertUser (UpsertUserRequest) returns (UpsertUserResponse);
+}

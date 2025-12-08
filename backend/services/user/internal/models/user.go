@@ -19,3 +19,13 @@ type CreateUser struct {
 	UserID string
 	Name   string
 }
+
+type UpsertUser struct {
+	AuthID    int64
+	UserID    string
+	Name      string
+	Bio       *string
+	Sex       *string
+	Birthdate *time.Time
+	Phone     *string
+}
