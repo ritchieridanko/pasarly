@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/constants"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/infra/logger"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/interface/handlers"
 	"github.com/ritchieridanko/pasarly/backend/services/gateway/internal/interface/middlewares"
@@ -43,7 +44,12 @@ func Init(l *logger.Logger, appName, jwtSecret string, ah *handlers.AuthHandler,
 	// Users
 	users := v1.Group("/users")
 	{
-		users.PUT("/me", middlewares.Authenticate(jwtSecret), uh.UpsertUser)
+		users.PUT(
+			"/me",
+			middlewares.Authenticate(jwtSecret),
+			middlewares.Authorize(constants.RoleCustomer),
+			uh.UpsertUser,
+		)
 	}
 
 	return &Router{router: r}

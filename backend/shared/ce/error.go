@@ -56,7 +56,8 @@ func (e *Error) ToHTTPStatus() int {
 		CodeInvalidToken,
 		CodeTokenExpired,
 		CodeTokenMalformed,
-		CodeUnauthenticated:
+		CodeUnauthenticated,
+		CodeUnauthorized:
 		return http.StatusUnauthorized
 	case CodeDataConflict:
 		return http.StatusConflict

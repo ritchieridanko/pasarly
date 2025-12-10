@@ -28,6 +28,7 @@ const (
 	CodeTokenExpired       errCode = "TOKEN_EXPIRED_ERR"
 	CodeTokenMalformed     errCode = "TOKEN_MALFORMED_ERR"
 	CodeUnauthenticated    errCode = "UNAUTHENTICATED_ERR"
+	CodeUnauthorized       errCode = "UNAUTHORIZED_ERR"
 	CodeUnknown            errCode = "UNKNOWN_ERR"
 	CodeWrongSignInMethod  errCode = "WRONG_SIGN_IN_METHOD_ERR"
 )
@@ -40,6 +41,7 @@ const (
 	MsgInvalidParams          string = "Invalid params"
 	MsgInvalidPayload         string = "Invalid payload"
 	MsgUnauthenticated        string = "Unauthenticated"
+	MsgUnauthorized           string = "Unauthorized"
 )
 
 // Internal errors
@@ -51,5 +53,6 @@ var (
 	ErrEmailReserved          error = errors.New("email reserved")
 	ErrEventOnProcess         error = errors.New("message is being processed on another instance")
 	ErrInvalidToken           error = errors.New("invalid token")
+	ErrRoleUnauthorized       error = errors.New("role unauthorized")
 	ErrWrongSignInMethod      error = errors.New("wrong sign in method")
 )

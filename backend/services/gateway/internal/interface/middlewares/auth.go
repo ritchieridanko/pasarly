@@ -65,3 +65,26 @@ func Authenticate(secret string) gin.HandlerFunc {
 		ctx.Next()
 	}
 }
+
+func Authorize(role string) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		c, span := otel.Tracer(authErrTracer).Start(ctx.Request.Context(), "Authorize")
+		defer span.End()
+
+		r, err := utils.CtxRole(c)
+		if err != nil {
+			e := fmt.Errorf("failed to authorize: %w", err)
+			ctx.Error(ce.NewError(span, ce.CodeCtxValueNotFound, ce.MsgInternalServer, e))
+			ctx.Abort()
+			return
+		}
+		if r != role {
+			e := fmt.Errorf("failed to authorize: %w", ce.ErrRoleUnauthorized)
+			ctx.Error(ce.NewError(span, ce.CodeUnauthorized, ce.MsgUnauthorized, e))
+			ctx.Abort()
+			return
+		}
+
+		ctx.Next()
+	}
+}

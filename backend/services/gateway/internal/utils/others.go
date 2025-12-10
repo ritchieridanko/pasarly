@@ -23,6 +23,15 @@ func CtxAuthID(ctx context.Context) (int64, error) {
 	return authID, nil
 }
 
+func CtxRole(ctx context.Context) (string, error) {
+	role, ok := ctx.Value(constants.CtxKeyRole).(string)
+	if !ok {
+		return "", errors.New("role not provided")
+	}
+
+	return role, nil
+}
+
 func NewUUID() uuid.UUID {
 	return uuid.New()
 }
