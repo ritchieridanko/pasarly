@@ -24,12 +24,14 @@ const (
 	CodeInvalidParams      errCode = "INVALID_PARAMS_ERR"
 	CodeInvalidPayload     errCode = "INVALID_PAYLOAD_ERR"
 	CodeInvalidToken       errCode = "INVALID_TOKEN_ERR"
+	CodeNotFound           errCode = "NOT_FOUND_ERR"
 	CodeSessionNotFound    errCode = "SESSION_NOT_FOUND_ERR"
 	CodeTokenExpired       errCode = "TOKEN_EXPIRED_ERR"
 	CodeTokenMalformed     errCode = "TOKEN_MALFORMED_ERR"
 	CodeUnauthenticated    errCode = "UNAUTHENTICATED_ERR"
 	CodeUnauthorized       errCode = "UNAUTHORIZED_ERR"
 	CodeUnknown            errCode = "UNKNOWN_ERR"
+	CodeUserNotFound       errCode = "USER_NOT_FOUND_ERR"
 	CodeWrongSignInMethod  errCode = "WRONG_SIGN_IN_METHOD_ERR"
 )
 
@@ -42,6 +44,7 @@ const (
 	MsgInvalidPayload         string = "Invalid payload"
 	MsgUnauthenticated        string = "Unauthenticated"
 	MsgUnauthorized           string = "Unauthorized"
+	MsgUserNotFound           string = "User not found"
 )
 
 // Internal errors

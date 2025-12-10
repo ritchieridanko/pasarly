@@ -16,6 +16,7 @@ const userErrTracer string = "usecase.user"
 
 type UserUsecase interface {
 	UpsertUser(ctx context.Context, data *models.UpsertUser) (user *models.User, err *ce.Error)
+	GetUser(ctx context.Context, authID int64) (user *models.User, err *ce.Error)
 	UpdateUser(ctx context.Context, data *models.UpdateUser) (user *models.User, err *ce.Error)
 }
 
@@ -56,6 +57,13 @@ func (u *userUsecase) UpsertUser(ctx context.Context, data *models.UpsertUser) (
 
 	data.UserID = utils.NewUUID().String()
 	return u.ur.UpsertUser(ctx, data)
+}
+
+func (u *userUsecase) GetUser(ctx context.Context, authID int64) (*models.User, *ce.Error) {
+	ctx, span := otel.Tracer(userErrTracer).Start(ctx, "GetUser")
+	defer span.End()
+
+	return u.ur.GetUserByAuthID(ctx, authID)
 }
 
 func (u *userUsecase) UpdateUser(ctx context.Context, data *models.UpdateUser) (*models.User, *ce.Error) {

@@ -28,6 +28,18 @@ message UpsertUserRequest {
   google.protobuf.StringValue phone = 6;
 }
 
+message UpsertUserResponse {
+  User user = 1;
+}
+
+message GetUserRequest {
+  int64 auth_id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
 message UpdateUserRequest {
   int64 auth_id = 1;
   google.protobuf.StringValue name = 2;
@@ -37,15 +49,12 @@ message UpdateUserRequest {
   google.protobuf.StringValue phone = 6;
 }
 
-message UpsertUserResponse {
-  User user = 1;
-}
-
 message UpdateUserResponse {
   User user = 1;
 }
 
 service UserService {
   rpc UpsertUser (UpsertUserRequest) returns (UpsertUserResponse);
+  rpc GetUser (GetUserRequest) returns (GetUserResponse);
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
 }

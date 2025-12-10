@@ -17,6 +17,7 @@ const userErrTracer string = "repository.user"
 type UserRepository interface {
 	CreateUser(ctx context.Context, data *models.CreateUser) (user *models.User, err *ce.Error)
 	UpsertUser(ctx context.Context, data *models.UpsertUser) (user *models.User, err *ce.Error)
+	GetUserByAuthID(ctx context.Context, authID int64) (user *models.User, err *ce.Error)
 	UpdateUser(ctx context.Context, data *models.UpdateUser) (user *models.User, err *ce.Error)
 	Exists(ctx context.Context, authID int64) (exists bool, err *ce.Error)
 }
@@ -91,6 +92,41 @@ func (r *userRepository) UpsertUser(ctx context.Context, data *models.UpsertUser
 	)
 	if err != nil {
 		e := fmt.Errorf("failed to upsert user: %w", err)
+		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+
+	return &user, nil
+}
+
+func (r *userRepository) GetUserByAuthID(ctx context.Context, authID int64) (*models.User, *ce.Error) {
+	ctx, span := otel.Tracer(userErrTracer).Start(ctx, "GetUserByAuthID")
+	defer span.End()
+
+	query := `
+		SELECT
+			user_id, name, bio, sex, birthdate, phone, profile_picture,
+			created_at, updated_at
+		FROM users
+		WHERE auth_id = $1 AND deleted_at IS NULL
+	`
+	if r.database.InTx(ctx) {
+		query += " FOR UPDATE"
+	}
+
+	row := r.database.QueryRow(ctx, query, authID)
+
+	var user models.User
+	err := row.Scan(
+		&user.ID, &user.Name, &user.Bio, &user.Sex,
+		&user.Birthdate, &user.Phone, &user.ProfilePicture,
+		&user.CreatedAt, &user.UpdatedAt,
+	)
+	if err != nil {
+		e := fmt.Errorf("failed to fetch user by auth id: %w", err)
+		if errors.Is(err, ce.ErrDBReturnNoRows) {
+			return nil, ce.NewError(span, ce.CodeUserNotFound, ce.MsgUserNotFound, e)
+		}
+
 		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
 	}
 

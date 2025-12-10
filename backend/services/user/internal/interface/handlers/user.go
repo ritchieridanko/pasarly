@@ -58,6 +58,31 @@ func (h *UserHandler) UpsertUser(ctx context.Context, req *apis.UpsertUserReques
 	}, nil
 }
 
+func (h *UserHandler) GetUser(ctx context.Context, req *apis.GetUserRequest) (*apis.GetUserResponse, error) {
+	ctx, span := otel.Tracer(userErrTracer).Start(ctx, "GetUser")
+	defer span.End()
+
+	user, err := h.uu.GetUser(ctx, req.GetAuthId())
+	if err != nil {
+		h.logger.Sugar().Errorln(err.Error())
+		return nil, err.ToGRPCStatus()
+	}
+
+	return &apis.GetUserResponse{
+		User: &apis.User{
+			Id:             user.ID,
+			Name:           user.Name,
+			Bio:            utils.WrapString(user.Bio),
+			Sex:            utils.WrapString(user.Sex),
+			Birthdate:      utils.WrapTime(user.Birthdate),
+			Phone:          utils.WrapString(user.Phone),
+			ProfilePicture: utils.WrapString(user.ProfilePicture),
+			CreatedAt:      timestamppb.New(user.CreatedAt),
+			UpdatedAt:      timestamppb.New(user.UpdatedAt),
+		},
+	}, nil
+}
+
 func (h *UserHandler) UpdateUser(ctx context.Context, req *apis.UpdateUserRequest) (*apis.UpdateUserResponse, error) {
 	ctx, span := otel.Tracer(userErrTracer).Start(ctx, "UpdateUser")
 	defer span.End()

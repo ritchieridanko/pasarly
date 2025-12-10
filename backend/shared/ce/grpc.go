@@ -20,6 +20,8 @@ func FromGRPCErr(s trace.Span, err error) *Error {
 		return NewError(s, CodeDataConflict, st.Message(), e)
 	case codes.InvalidArgument:
 		return NewError(s, CodeInvalidPayload, st.Message(), e)
+	case codes.NotFound:
+		return NewError(s, CodeNotFound, st.Message(), e)
 	case codes.Unauthenticated:
 		return NewError(s, CodeUnauthenticated, st.Message(), e)
 	case codes.Internal:
