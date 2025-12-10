@@ -75,6 +75,43 @@ func (h *UserHandler) UpsertUser(ctx *gin.Context) {
 	)
 }
 
+func (h *UserHandler) GetUser(ctx *gin.Context) {
+	c, span := otel.Tracer(userErrTracer).Start(ctx.Request.Context(), "GetUser")
+	defer span.End()
+
+	authID, err := utils.CtxAuthID(c)
+	if err != nil {
+		e := fmt.Errorf("failed to fetch user: %w", err)
+		ctx.Error(ce.NewError(span, ce.CodeCtxValueNotFound, ce.MsgInternalServer, e))
+		return
+	}
+
+	resp, err := h.us.GetUser(c, &apis.GetUserRequest{AuthId: authID})
+	if err != nil {
+		ctx.Error(ce.FromGRPCErr(span, err))
+		return
+	}
+
+	utils.SendResponse(
+		ctx,
+		http.StatusOK,
+		"OK",
+		dtos.GetUserResponse{
+			User: dtos.User{
+				ID:             resp.GetUser().GetId(),
+				Name:           resp.GetUser().GetName(),
+				Bio:            utils.UnwrapString(resp.GetUser().GetBio()),
+				Sex:            utils.UnwrapString(resp.GetUser().GetSex()),
+				Birthdate:      utils.UnwrapTimestamp(resp.GetUser().GetBirthdate()),
+				Phone:          utils.UnwrapString(resp.GetUser().GetPhone()),
+				ProfilePicture: utils.UnwrapString(resp.GetUser().GetProfilePicture()),
+				CreatedAt:      resp.GetUser().GetCreatedAt().AsTime(),
+				UpdatedAt:      resp.GetUser().GetUpdatedAt().AsTime(),
+			},
+		},
+	)
+}
+
 func (h *UserHandler) UpdateUser(ctx *gin.Context) {
 	c, span := otel.Tracer(userErrTracer).Start(ctx.Request.Context(), "UpdateUser")
 	defer span.End()

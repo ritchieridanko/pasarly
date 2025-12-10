@@ -44,6 +44,13 @@ func Init(l *logger.Logger, appName, jwtSecret string, ah *handlers.AuthHandler,
 	// Users
 	users := v1.Group("/users")
 	{
+		users.GET(
+			"/me",
+			middlewares.Authenticate(jwtSecret),
+			middlewares.Authorize(constants.RoleCustomer),
+			uh.GetUser,
+		)
+
 		users.PUT(
 			"/me",
 			middlewares.Authenticate(jwtSecret),
