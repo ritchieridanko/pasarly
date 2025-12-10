@@ -50,6 +50,13 @@ func Init(l *logger.Logger, appName, jwtSecret string, ah *handlers.AuthHandler,
 			middlewares.Authorize(constants.RoleCustomer),
 			uh.UpsertUser,
 		)
+
+		users.PATCH(
+			"/me",
+			middlewares.Authenticate(jwtSecret),
+			middlewares.Authorize(constants.RoleCustomer),
+			uh.UpdateUser,
+		)
 	}
 
 	return &Router{router: r}

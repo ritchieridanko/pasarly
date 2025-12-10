@@ -25,3 +25,15 @@ type UpsertUserRequest struct {
 type UpsertUserResponse struct {
 	User User `json:"user"`
 }
+
+type UpdateUserRequest struct {
+	Name      *string    `json:"name"`
+	Bio       *string    `json:"bio"`
+	Sex       *string    `json:"sex"`
+	Birthdate *time.Time `json:"birthdate" time_format:"2006-01-02"`
+	Phone     *string    `json:"phone"`
+}
+
+type UpdateUserResponse struct {
+	User User `json:"user"`
+}
