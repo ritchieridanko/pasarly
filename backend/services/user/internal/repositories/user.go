@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/infra/database"
 	"github.com/ritchieridanko/pasarly/backend/services/user/internal/models"
@@ -16,6 +17,7 @@ const userErrTracer string = "repository.user"
 type UserRepository interface {
 	CreateUser(ctx context.Context, data *models.CreateUser) (user *models.User, err *ce.Error)
 	UpsertUser(ctx context.Context, data *models.UpsertUser) (user *models.User, err *ce.Error)
+	UpdateUser(ctx context.Context, data *models.UpdateUser) (user *models.User, err *ce.Error)
 	Exists(ctx context.Context, authID int64) (exists bool, err *ce.Error)
 }
 
@@ -89,6 +91,79 @@ func (r *userRepository) UpsertUser(ctx context.Context, data *models.UpsertUser
 	)
 	if err != nil {
 		e := fmt.Errorf("failed to upsert user: %w", err)
+		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+
+	return &user, nil
+}
+
+func (r *userRepository) UpdateUser(ctx context.Context, data *models.UpdateUser) (*models.User, *ce.Error) {
+	ctx, span := otel.Tracer(userErrTracer).Start(ctx, "UpdateUser")
+	defer span.End()
+
+	setClauses := []string{}
+	args := []interface{}{}
+	argPos := 1
+
+	if data.Name != nil {
+		setClauses = append(setClauses, fmt.Sprintf("name = $%d", argPos))
+		args = append(args, *data.Name)
+		argPos++
+	}
+	if data.Bio != nil {
+		setClauses = append(setClauses, fmt.Sprintf("bio = $%d", argPos))
+		args = append(args, *data.Bio)
+		argPos++
+	}
+	if data.Sex != nil {
+		setClauses = append(setClauses, fmt.Sprintf("sex = $%d", argPos))
+		args = append(args, *data.Sex)
+		argPos++
+	}
+	if data.Birthdate != nil {
+		setClauses = append(setClauses, fmt.Sprintf("birthdate = $%d", argPos))
+		args = append(args, *data.Birthdate)
+		argPos++
+	}
+	if data.Phone != nil {
+		setClauses = append(setClauses, fmt.Sprintf("phone = $%d", argPos))
+		args = append(args, *data.Phone)
+		argPos++
+	}
+	if len(setClauses) == 0 {
+		err := fmt.Errorf("failed to update user: %w", ce.ErrNoFieldsToUpdate)
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, ce.MsgInvalidPayload, err)
+	}
+
+	setClauses = append(setClauses, "updated_at = NOW()")
+	args = append(args, data.AuthID)
+
+	query := fmt.Sprintf(
+		`
+			UPDATE users
+			SET %s
+			WHERE auth_id = $%d AND deleted_at IS NULL
+			RETURNING
+				user_id, name, bio, sex, birthdate, phone, profile_picture,
+				created_at, updated_at
+		`,
+		strings.Join(setClauses, ", "), argPos,
+	)
+
+	row := r.database.QueryRow(ctx, query, args...)
+
+	var user models.User
+	err := row.Scan(
+		&user.ID, &user.Name, &user.Bio, &user.Sex,
+		&user.Birthdate, &user.Phone, &user.ProfilePicture,
+		&user.CreatedAt, &user.UpdatedAt,
+	)
+	if err != nil {
+		e := fmt.Errorf("failed to update user: %w", err)
+		if errors.Is(err, ce.ErrDBReturnNoRows) {
+			return nil, ce.NewError(span, ce.CodeAuthNotFound, ce.MsgInvalidCredentials, e)
+		}
+
 		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
 	}
 

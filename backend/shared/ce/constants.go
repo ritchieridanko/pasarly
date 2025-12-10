@@ -53,6 +53,7 @@ var (
 	ErrEmailReserved          error = errors.New("email reserved")
 	ErrEventOnProcess         error = errors.New("message is being processed on another instance")
 	ErrInvalidToken           error = errors.New("invalid token")
+	ErrNoFieldsToUpdate       error = errors.New("no fields to update")
 	ErrRoleUnauthorized       error = errors.New("role unauthorized")
 	ErrWrongSignInMethod      error = errors.New("wrong sign in method")
 )

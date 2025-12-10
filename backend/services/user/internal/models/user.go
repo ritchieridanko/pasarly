@@ -29,3 +29,12 @@ type UpsertUser struct {
 	Birthdate *time.Time
 	Phone     *string
 }
+
+type UpdateUser struct {
+	AuthID    int64
+	Name      *string
+	Bio       *string
+	Sex       *string
+	Birthdate *time.Time
+	Phone     *string
+}

@@ -31,10 +31,10 @@ func (h *UserHandler) UpsertUser(ctx context.Context, req *apis.UpsertUserReques
 	data := models.UpsertUser{
 		AuthID:    req.GetAuthId(),
 		Name:      req.GetName(),
-		Bio:       utils.UnwrapString(req.Bio),
-		Sex:       utils.UnwrapString(req.Sex),
-		Birthdate: utils.UnwrapTimestamp(req.Birthdate),
-		Phone:     utils.UnwrapString(req.Phone),
+		Bio:       utils.UnwrapString(req.GetBio()),
+		Sex:       utils.UnwrapString(req.GetSex()),
+		Birthdate: utils.UnwrapTimestamp(req.GetBirthdate()),
+		Phone:     utils.UnwrapString(req.GetPhone()),
 	}
 
 	user, err := h.uu.UpsertUser(ctx, &data)
@@ -44,6 +44,40 @@ func (h *UserHandler) UpsertUser(ctx context.Context, req *apis.UpsertUserReques
 	}
 
 	return &apis.UpsertUserResponse{
+		User: &apis.User{
+			Id:             user.ID,
+			Name:           user.Name,
+			Bio:            utils.WrapString(user.Bio),
+			Sex:            utils.WrapString(user.Sex),
+			Birthdate:      utils.WrapTime(user.Birthdate),
+			Phone:          utils.WrapString(user.Phone),
+			ProfilePicture: utils.WrapString(user.ProfilePicture),
+			CreatedAt:      timestamppb.New(user.CreatedAt),
+			UpdatedAt:      timestamppb.New(user.UpdatedAt),
+		},
+	}, nil
+}
+
+func (h *UserHandler) UpdateUser(ctx context.Context, req *apis.UpdateUserRequest) (*apis.UpdateUserResponse, error) {
+	ctx, span := otel.Tracer(userErrTracer).Start(ctx, "UpdateUser")
+	defer span.End()
+
+	data := models.UpdateUser{
+		AuthID:    req.GetAuthId(),
+		Name:      utils.UnwrapString(req.GetName()),
+		Bio:       utils.UnwrapString(req.GetBio()),
+		Sex:       utils.UnwrapString(req.GetSex()),
+		Birthdate: utils.UnwrapTimestamp(req.GetBirthdate()),
+		Phone:     utils.UnwrapString(req.GetPhone()),
+	}
+
+	user, err := h.uu.UpdateUser(ctx, &data)
+	if err != nil {
+		h.logger.Sugar().Errorln(err.Error())
+		return nil, err.ToGRPCStatus()
+	}
+
+	return &apis.UpdateUserResponse{
 		User: &apis.User{
 			Id:             user.ID,
 			Name:           user.Name,
