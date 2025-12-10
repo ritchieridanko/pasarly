@@ -60,7 +60,7 @@ func (e *Error) ToHTTPStatus() int {
 		return http.StatusUnauthorized
 	case CodeDataConflict:
 		return http.StatusConflict
-	case CodeInternal, CodeUnknown:
+	case CodeCtxValueNotFound, CodeInternal, CodeUnknown:
 		return http.StatusInternalServerError
 	default:
 		return http.StatusInternalServerError

@@ -28,7 +28,7 @@ func Init(cfg *configs.Server, h http.Handler, l *logger.Logger) *Server {
 
 func (s *Server) Start() error {
 	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		return fmt.Errorf("failed to start server: %w", err)
+		return fmt.Errorf("failed to initialize server: %w", err)
 	}
 
 	s.logger.Sugar().Infof("✅ [SERVER] running on (host=%s, port=%d)", s.config.Host, s.config.Port)

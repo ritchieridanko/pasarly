@@ -40,6 +40,12 @@ type Service struct {
 		Host string `mapstructure:"host"`
 		Port int    `mapstructure:"port"`
 	} `mapstructure:"auth"`
+
+	User struct {
+		Addr string
+		Host string `mapstructure:"host"`
+		Port int    `mapstructure:"port"`
+	} `mapstructure:"user"`
 }
 
 type JWT struct {
@@ -84,6 +90,7 @@ func Init(path string) (*Config, error) {
 
 	cfg.App.Env = env
 	cfg.Auth.Addr = fmt.Sprintf("%s:%d", cfg.Auth.Host, cfg.Auth.Port)
+	cfg.User.Addr = fmt.Sprintf("%s:%d", cfg.User.Host, cfg.User.Port)
 	cfg.Tracer.Endpoint = fmt.Sprintf("%s:%d", cfg.Tracer.Host, cfg.Tracer.Port)
 
 	return &cfg, nil

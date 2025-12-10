@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	nameMinLength int = 3
-	nameMaxLength int = 100
-	bioMaxLength  int = 200
+	nameMinLength   int = 3
+	nameMaxLength   int = 100
+	bioMaxLength    int = 200
+	birthdateMinAge int = 17
 )
 
 var rgxPhone = regexp.MustCompile(`^(?:0|\+62|62)8\d{8,11}$`)
@@ -69,12 +70,20 @@ func (u *Validator) Birthdate(value *time.Time) (bool, string) {
 	if value == nil {
 		return true, ""
 	}
-	if value.After(time.Now().UTC()) {
-		return false, fmt.Sprintf(
-			"Birthdate is invalid: %d-%d-%d",
-			value.Year(), value.Month(), value.Day(),
-		)
+
+	now := time.Now().UTC()
+	if value.After(now) {
+		return false, fmt.Sprintf("Birthdate is invalid: %s", value.Format("2006-01-02"))
 	}
+
+	age := now.Year() - value.Year()
+	if now.Month() < value.Month() || (now.Month() == value.Month() && now.Day() < value.Day()) {
+		age--
+	}
+	if age < birthdateMinAge {
+		return false, fmt.Sprintf("Must be at least %d years old", birthdateMinAge)
+	}
+
 	return true, ""
 }
 

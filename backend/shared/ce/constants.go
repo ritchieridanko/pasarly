@@ -13,6 +13,7 @@ const (
 	CodeCacheQueryExec     errCode = "CACHE_QUERY_EXEC_ERR"
 	CodeCacheScriptExec    errCode = "CACHE_SCRIPT_EXEC_ERR"
 	CodeCookieNotFound     errCode = "COOKIE_NOT_FOUND_ERR"
+	CodeCtxValueNotFound   errCode = "CTX_VALUE_NOT_FOUND_ERR"
 	CodeDataConflict       errCode = "DATA_CONFLICT_ERR"
 	CodeDBQueryExec        errCode = "DB_QUERY_EXEC_ERR"
 	CodeDBTx               errCode = "DB_TX_ERR"

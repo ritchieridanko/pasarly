@@ -15,6 +15,7 @@ type Container struct {
 	logger *logger.Logger
 	cookie *utils.Cookie
 	ah     *handlers.AuthHandler
+	uh     *handlers.UserHandler
 	router *router.Router
 	server *server.Server
 }
@@ -28,9 +29,10 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 
 	// Handlers
 	ah := handlers.NewAuthHandler(i.AuthService(), c, cfg.Duration.Session)
+	uh := handlers.NewUserHandler(i.UserService())
 
 	// Router
-	r := router.Init(l, ah, cfg.App.Name, cfg.JWT.Secret)
+	r := router.Init(l, cfg.App.Name, cfg.JWT.Secret, ah, uh)
 
 	// Server
 	s := server.Init(&cfg.Server, r.Router(), l)
@@ -40,6 +42,7 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 		logger: l,
 		cookie: c,
 		ah:     ah,
+		uh:     uh,
 		router: r,
 		server: s,
 	}

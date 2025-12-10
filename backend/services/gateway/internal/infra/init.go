@@ -16,6 +16,7 @@ type Infra struct {
 	logger *zap.Logger
 	tracer *tracer.Tracer
 	as     apis.AuthServiceClient
+	us     apis.UserServiceClient
 }
 
 func Init(cfg *configs.Config) (*Infra, error) {
@@ -34,8 +35,12 @@ func Init(cfg *configs.Config) (*Infra, error) {
 	if err != nil {
 		return nil, err
 	}
+	us, err := services.NewUserService(&cfg.Service, l)
+	if err != nil {
+		return nil, err
+	}
 
-	return &Infra{config: cfg, logger: l, tracer: t, as: as}, nil
+	return &Infra{config: cfg, logger: l, tracer: t, as: as, us: us}, nil
 }
 
 func (i *Infra) Logger() *zap.Logger {
@@ -44,6 +49,10 @@ func (i *Infra) Logger() *zap.Logger {
 
 func (i *Infra) AuthService() apis.AuthServiceClient {
 	return i.as
+}
+
+func (i *Infra) UserService() apis.UserServiceClient {
+	return i.us
 }
 
 func (i *Infra) Close() error {

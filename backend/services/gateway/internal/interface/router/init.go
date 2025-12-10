@@ -14,7 +14,7 @@ type Router struct {
 	router *gin.Engine
 }
 
-func Init(l *logger.Logger, ah *handlers.AuthHandler, appName, jwtSecret string) *Router {
+func Init(l *logger.Logger, appName, jwtSecret string, ah *handlers.AuthHandler, uh *handlers.UserHandler) *Router {
 	r := gin.New()
 	r.Use(otelgin.Middleware(appName))
 	r.Use(gin.Recovery())
@@ -38,6 +38,12 @@ func Init(l *logger.Logger, ah *handlers.AuthHandler, appName, jwtSecret string)
 		auth.POST("/sign-up", ah.SignUp)
 		auth.POST("/sign-in", ah.SignIn)
 		auth.POST("/sign-out", middlewares.Authenticate(jwtSecret), ah.SignOut)
+	}
+
+	// Users
+	users := v1.Group("/users")
+	{
+		users.PUT("/me", middlewares.Authenticate(jwtSecret), uh.UpsertUser)
 	}
 
 	return &Router{router: r}
