@@ -38,3 +38,8 @@ type UpdateUser struct {
 	Birthdate *time.Time
 	Phone     *string
 }
+
+type UpdateProfilePicture struct {
+	AuthID         int64
+	ProfilePicture string
+}

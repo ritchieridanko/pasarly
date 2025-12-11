@@ -18,6 +18,7 @@ type UserUsecase interface {
 	UpsertUser(ctx context.Context, data *models.UpsertUser) (user *models.User, err *ce.Error)
 	GetUser(ctx context.Context, authID int64) (user *models.User, err *ce.Error)
 	UpdateUser(ctx context.Context, data *models.UpdateUser) (user *models.User, err *ce.Error)
+	UpdateProfilePicture(ctx context.Context, data *models.UpdateProfilePicture) (profilePicture string, err *ce.Error)
 }
 
 type userUsecase struct {
@@ -93,4 +94,11 @@ func (u *userUsecase) UpdateUser(ctx context.Context, data *models.UpdateUser) (
 	}
 
 	return u.ur.UpdateUser(ctx, data)
+}
+
+func (u *userUsecase) UpdateProfilePicture(ctx context.Context, data *models.UpdateProfilePicture) (string, *ce.Error) {
+	ctx, span := otel.Tracer(userErrTracer).Start(ctx, "UpdateProfilePicture")
+	defer span.End()
+
+	return u.ur.UpdateProfilePicture(ctx, data)
 }

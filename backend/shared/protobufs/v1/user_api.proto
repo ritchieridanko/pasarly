@@ -53,8 +53,18 @@ message UpdateUserResponse {
   User user = 1;
 }
 
+message UpdateProfilePictureRequest {
+  int64 auth_id = 1;
+  string profile_picture = 2;
+}
+
+message UpdateProfilePictureResponse {
+  string profile_picture = 1;
+}
+
 service UserService {
   rpc UpsertUser (UpsertUserRequest) returns (UpsertUserResponse);
   rpc GetUser (GetUserRequest) returns (GetUserResponse);
   rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
+  rpc UpdateProfilePicture (UpdateProfilePictureRequest) returns (UpdateProfilePictureResponse);
 }

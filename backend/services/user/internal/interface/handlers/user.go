@@ -116,3 +116,21 @@ func (h *UserHandler) UpdateUser(ctx context.Context, req *apis.UpdateUserReques
 		},
 	}, nil
 }
+
+func (h *UserHandler) UpdateProfilePicture(ctx context.Context, req *apis.UpdateProfilePictureRequest) (*apis.UpdateProfilePictureResponse, error) {
+	ctx, span := otel.Tracer(userErrTracer).Start(ctx, "UpdateProfilePicture")
+	defer span.End()
+
+	data := models.UpdateProfilePicture{
+		AuthID:         req.GetAuthId(),
+		ProfilePicture: req.GetProfilePicture(),
+	}
+
+	profilePicture, err := h.uu.UpdateProfilePicture(ctx, &data)
+	if err != nil {
+		h.logger.Sugar().Errorln(err.Error())
+		return nil, err.ToGRPCStatus()
+	}
+
+	return &apis.UpdateProfilePictureResponse{ProfilePicture: profilePicture}, nil
+}

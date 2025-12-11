@@ -19,6 +19,7 @@ type UserRepository interface {
 	UpsertUser(ctx context.Context, data *models.UpsertUser) (user *models.User, err *ce.Error)
 	GetUserByAuthID(ctx context.Context, authID int64) (user *models.User, err *ce.Error)
 	UpdateUser(ctx context.Context, data *models.UpdateUser) (user *models.User, err *ce.Error)
+	UpdateProfilePicture(ctx context.Context, data *models.UpdateProfilePicture) (profilePicture string, err *ce.Error)
 	Exists(ctx context.Context, authID int64) (exists bool, err *ce.Error)
 }
 
@@ -197,13 +198,39 @@ func (r *userRepository) UpdateUser(ctx context.Context, data *models.UpdateUser
 	if err != nil {
 		e := fmt.Errorf("failed to update user: %w", err)
 		if errors.Is(err, ce.ErrDBReturnNoRows) {
-			return nil, ce.NewError(span, ce.CodeAuthNotFound, ce.MsgInvalidCredentials, e)
+			return nil, ce.NewError(span, ce.CodeUserNotFound, ce.MsgUserNotFound, e)
 		}
 
 		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
 	}
 
 	return &user, nil
+}
+
+func (r *userRepository) UpdateProfilePicture(ctx context.Context, data *models.UpdateProfilePicture) (string, *ce.Error) {
+	ctx, span := otel.Tracer(userErrTracer).Start(ctx, "UpdateProfilePicture")
+	defer span.End()
+
+	query := `
+		UPDATE users
+		SET profile_picture = $1, updated_at = NOW()
+		WHERE auth_id = $2 AND deleted_at IS NULL
+		RETURNING profile_picture
+	`
+
+	row := r.database.QueryRow(ctx, query, data.ProfilePicture, data.AuthID)
+
+	var profilePicture string
+	if err := row.Scan(&profilePicture); err != nil {
+		e := fmt.Errorf("failed to update profile picture: %w", err)
+		if errors.Is(err, ce.ErrDBReturnNoRows) {
+			return "", ce.NewError(span, ce.CodeUserNotFound, ce.MsgUserNotFound, e)
+		}
+
+		return "", ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+
+	return profilePicture, nil
 }
 
 func (r *userRepository) Exists(ctx context.Context, authID int64) (bool, *ce.Error) {
