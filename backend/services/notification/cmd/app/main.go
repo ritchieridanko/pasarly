@@ -10,9 +10,9 @@ import (
 
 	"github.com/ritchieridanko/pasarly/backend/services/notification/configs"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/di"
-	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/handlers"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra/subscriber"
+	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/processors"
 )
 
 func main() {
@@ -40,12 +40,12 @@ func main() {
 	wg.Add(1)
 
 	// Run the subscribers
-	go func(ctx context.Context, s *subscriber.Subscriber, h *handlers.AuthHandler) {
+	go func(ctx context.Context, s *subscriber.Subscriber, p processors.AuthProcessor) {
 		defer wg.Done()
-		if err := s.Listen(ctx, h.OnAuthCreated); err != nil {
+		if err := s.Listen(ctx, p.OnAuthCreated); err != nil {
 			log.Println("ERROR ->", err.Error())
 		}
-	}(ctx, container.SubAuthCreated(), container.AuthHandler())
+	}(ctx, container.SubAuthCreated(), container.AuthProcessor())
 
 	// Handle app shutdown
 	quit := make(chan os.Signal, 1)

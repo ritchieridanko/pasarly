@@ -9,10 +9,8 @@ import (
 )
 
 func Init(cfg *configs.Broker, topic string, l *zap.Logger) *kafka.Writer {
-	b := strings.Split(cfg.Brokers, ",")
-
 	w := kafka.NewWriter(kafka.WriterConfig{
-		Brokers:      b,
+		Brokers:      strings.Split(cfg.Brokers, ","),
 		Topic:        topic,
 		Balancer:     &kafka.LeastBytes{},
 		RequiredAcks: int(kafka.RequireAll),

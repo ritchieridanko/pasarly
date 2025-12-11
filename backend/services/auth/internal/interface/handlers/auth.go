@@ -57,7 +57,7 @@ func (h *AuthHandler) SignUp(ctx context.Context, req *apis.SignUpRequest) (*api
 		},
 	}
 
-	ua, ip := utils.RequestMeta(ctx)
+	ua, ip := utils.CtxRequestMeta(ctx)
 	if ua == "" || ip == "" {
 		w := fmt.Sprintf("invalid request metadata (user_agent=%s, ip_address=%s)", ua, ip)
 		h.logger.Sugar().Warnf("failed to create session: %s", w)
@@ -98,7 +98,7 @@ func (h *AuthHandler) SignIn(ctx context.Context, req *apis.SignInRequest) (*api
 		return nil, err.ToGRPCStatus()
 	}
 
-	ua, ip := utils.RequestMeta(ctx)
+	ua, ip := utils.CtxRequestMeta(ctx)
 	if ua == "" || ip == "" {
 		w := fmt.Sprintf("invalid request metadata (user_agent=%s, ip_address=%s)", ua, ip)
 		h.logger.Sugar().Errorf("failed to create session: %s", w)

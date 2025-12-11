@@ -9,15 +9,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func NewUUID() uuid.UUID {
-	return uuid.New()
-}
-
-func NormalizeString(s string) string {
-	return strings.ToLower(strings.TrimSpace(s))
-}
-
-func RequestMeta(ctx context.Context) (userAgent, ipAddress string) {
+func CtxRequestMeta(ctx context.Context) (userAgent, ipAddress string) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return "", ""
@@ -31,4 +23,12 @@ func RequestMeta(ctx context.Context) (userAgent, ipAddress string) {
 	}
 
 	return
+}
+
+func NewUUID() uuid.UUID {
+	return uuid.New()
+}
+
+func NormalizeString(s string) string {
+	return strings.ToLower(strings.TrimSpace(s))
 }

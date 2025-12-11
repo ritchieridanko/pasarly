@@ -1,4 +1,4 @@
-package handlers
+package processors
 
 import (
 	"context"
@@ -17,25 +17,33 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const authErrTracer string = "handler.auth"
+const authErrTracer string = "processor.auth"
 
-type AuthHandler struct {
+type AuthProcessor interface {
+	OnAuthCreated(ctx context.Context, m kafka.Message) (err error)
+}
+
+type authProcessor struct {
 	timeout time.Duration
 	er      repositories.EventRepository
 	ec      channels.EmailChannel
 }
 
-func NewAuthHandler(er repositories.EventRepository, ec channels.EmailChannel, timeout time.Duration) *AuthHandler {
-	return &AuthHandler{er: er, ec: ec, timeout: timeout}
+func NewAuthProcessor(
+	er repositories.EventRepository,
+	ec channels.EmailChannel,
+	timeout time.Duration,
+) AuthProcessor {
+	return &authProcessor{er: er, ec: ec, timeout: timeout}
 }
 
-func (h *AuthHandler) OnAuthCreated(ctx context.Context, m kafka.Message) error {
+func (h *authProcessor) OnAuthCreated(ctx context.Context, m kafka.Message) error {
 	ctx, span := otel.Tracer(authErrTracer).Start(ctx, "OnAuthCreated")
 	defer span.End()
 
 	var evt events.AuthCreated
 	if err := proto.Unmarshal(m.Value, &evt); err != nil {
-		e := fmt.Errorf("failed to handle message: %w", err)
+		e := fmt.Errorf("failed to process message: %w", err)
 		utils.TraceErr(span, e, ce.MsgInternalServer)
 		return e
 	}
@@ -58,11 +66,11 @@ func (h *AuthHandler) OnAuthCreated(ctx context.Context, m kafka.Message) error 
 	}
 	if event != nil {
 		if event.CompletedAt != nil {
-			return nil // already completed -> skip
+			return nil
 		}
 
 		if time.Since(event.ProcessedAt).Seconds() < h.timeout.Seconds() {
-			e := fmt.Errorf("failed to handle message: %w", ce.ErrEventOnProcess)
+			e := fmt.Errorf("failed to process message: %w", ce.ErrEventOnProcess)
 			utils.TraceErr(span, e, ce.MsgInternalServer)
 			return e
 		}

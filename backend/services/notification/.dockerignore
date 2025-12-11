@@ -1,6 +1,10 @@
+.git
 bin/
 *.out
 *.md
 Dockerfile.app
 Dockerfile.migrator
 Makefile
+tmp/
+logs/
+coverage/

@@ -5,12 +5,12 @@ import (
 
 	"github.com/ritchieridanko/pasarly/backend/services/notification/configs"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/channels"
-	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/handlers"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra/database"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra/logger"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra/mailer"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/infra/subscriber"
+	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/processors"
 	"github.com/ritchieridanko/pasarly/backend/services/notification/internal/repositories"
 )
 
@@ -22,7 +22,7 @@ type Container struct {
 	acs      *subscriber.Subscriber
 	ec       channels.EmailChannel
 	er       repositories.EventRepository
-	ah       *handlers.AuthHandler
+	ap       processors.AuthProcessor
 }
 
 func Init(cfg *configs.Config, i *infra.Infra) (*Container, error) {
@@ -43,8 +43,8 @@ func Init(cfg *configs.Config, i *infra.Infra) (*Container, error) {
 	// Repositories
 	er := repositories.NewEventRepository(db)
 
-	// Handlers
-	ah := handlers.NewAuthHandler(er, ec, cfg.Mailer.Timeout)
+	// Processors
+	ap := processors.NewAuthProcessor(er, ec, cfg.Mailer.Timeout)
 
 	return &Container{
 		config:   cfg,
@@ -54,7 +54,7 @@ func Init(cfg *configs.Config, i *infra.Infra) (*Container, error) {
 		acs:      acs,
 		ec:       ec,
 		er:       er,
-		ah:       ah,
+		ap:       ap,
 	}, nil
 }
 
@@ -62,8 +62,8 @@ func (c *Container) SubAuthCreated() *subscriber.Subscriber {
 	return c.acs
 }
 
-func (c *Container) AuthHandler() *handlers.AuthHandler {
-	return c.ah
+func (c *Container) AuthProcessor() processors.AuthProcessor {
+	return c.ap
 }
 
 func (c *Container) Close() error {

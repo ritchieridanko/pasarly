@@ -10,10 +10,8 @@ import (
 )
 
 func Init(cfg *configs.Broker, topic string, l *zap.Logger) *kafka.Reader {
-	brokers := strings.Split(cfg.Brokers, ",")
-
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:        brokers,
+		Brokers:        strings.Split(cfg.Brokers, ","),
 		GroupID:        "notification-service",
 		Topic:          topic,
 		MaxBytes:       cfg.MaxBytes,
