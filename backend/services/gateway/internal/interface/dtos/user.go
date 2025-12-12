@@ -26,6 +26,10 @@ type UpsertUserResponse struct {
 	User User `json:"user"`
 }
 
+type GetUserResponse struct {
+	User User `json:"user"`
+}
+
 type UpdateUserRequest struct {
 	Name      *string    `json:"name"`
 	Bio       *string    `json:"bio"`
@@ -38,6 +42,10 @@ type UpdateUserResponse struct {
 	User User `json:"user"`
 }
 
-type GetUserResponse struct {
-	User User `json:"user"`
+type UpdateProfilePictureRequest struct {
+	ProfilePicture string `json:"profile_picture"`
+}
+
+type UpdateProfilePictureResponse struct {
+	ProfilePicture string `json:"profile_picture"`
 }

@@ -164,3 +164,42 @@ func (h *UserHandler) UpdateUser(ctx *gin.Context) {
 		},
 	)
 }
+
+func (h *UserHandler) UpdateProfilePicture(ctx *gin.Context) {
+	c, span := otel.Tracer(userErrTracer).Start(ctx.Request.Context(), "UpdateProfilePicture")
+	defer span.End()
+
+	var payload dtos.UpdateProfilePictureRequest
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		e := fmt.Errorf("failed to update profile picture: %w", err)
+		ctx.Error(ce.NewError(span, ce.CodeInvalidPayload, ce.MsgInvalidPayload, e))
+		return
+	}
+
+	authID, err := utils.CtxAuthID(c)
+	if err != nil {
+		e := fmt.Errorf("failed to update profile picture: %w", err)
+		ctx.Error(ce.NewError(span, ce.CodeCtxValueNotFound, ce.MsgInternalServer, e))
+		return
+	}
+
+	req := apis.UpdateProfilePictureRequest{
+		AuthId:         authID,
+		ProfilePicture: payload.ProfilePicture,
+	}
+
+	resp, err := h.us.UpdateProfilePicture(c, &req)
+	if err != nil {
+		ctx.Error(ce.FromGRPCErr(span, err))
+		return
+	}
+
+	utils.SendResponse(
+		ctx,
+		http.StatusOK,
+		"Profile picture updated successfully",
+		dtos.UpdateProfilePictureResponse{
+			ProfilePicture: resp.GetProfilePicture(),
+		},
+	)
+}

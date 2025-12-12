@@ -183,7 +183,7 @@ func (h *AuthHandler) IsEmailAvailable(ctx *gin.Context) {
 	}
 
 	utils.SendResponse(
-		ctx, http.StatusOK, "ok",
+		ctx, http.StatusOK, "OK",
 		dtos.EmailAvailabilityResponse{
 			IsAvailable: resp.GetIsAvailable(),
 		},

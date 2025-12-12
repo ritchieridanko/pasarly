@@ -64,6 +64,13 @@ func Init(l *logger.Logger, appName, jwtSecret string, ah *handlers.AuthHandler,
 			middlewares.Authorize(constants.RoleCustomer),
 			uh.UpdateUser,
 		)
+
+		users.PATCH(
+			"/me/profile-picture",
+			middlewares.Authenticate(jwtSecret),
+			middlewares.Authorize(constants.RoleCustomer),
+			uh.UpdateProfilePicture,
+		)
 	}
 
 	return &Router{router: r}
