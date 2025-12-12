@@ -114,6 +114,27 @@ func (h *AddressHandler) UpdateAddress(ctx context.Context, req *apis.UpdateUser
 	return &apis.UpdateUserAddressResponse{Address: h.toAddress(address)}, nil
 }
 
+func (h *AddressHandler) SetPrimaryAddress(ctx context.Context, req *apis.SetPrimaryAddressRequest) (*apis.SetPrimaryAddressResponse, error) {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "SetPrimaryAddress")
+	defer span.End()
+
+	data := models.SetPrimaryAddress{
+		AuthID:    req.GetAuthId(),
+		AddressID: req.GetAddressId(),
+	}
+
+	npa, opa, err := h.au.SetPrimaryAddress(ctx, &data)
+	if err != nil {
+		h.logger.Sugar().Errorln(err.Error())
+		return nil, err.ToGRPCStatus()
+	}
+
+	return &apis.SetPrimaryAddressResponse{
+		NewPrimaryAddress: h.toAddress(npa),
+		OldPrimaryAddress: h.toAddress(opa),
+	}, nil
+}
+
 func (h *AddressHandler) toAddress(a *models.Address) *apis.UserAddress {
 	address := apis.UserAddress{
 		Id:            a.ID,

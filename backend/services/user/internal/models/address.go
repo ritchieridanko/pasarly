@@ -57,3 +57,8 @@ type UpdateAddress struct {
 	Latitude     *float64
 	Longitude    *float64
 }
+
+type SetPrimaryAddress struct {
+	AuthID    int64
+	AddressID int64
+}

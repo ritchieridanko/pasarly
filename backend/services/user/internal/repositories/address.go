@@ -19,6 +19,7 @@ type AddressRepository interface {
 	GetAllAddresses(ctx context.Context, authID int64) (addresses []models.Address, err *ce.Error)
 	UpdateAddress(ctx context.Context, data *models.UpdateAddress) (address *models.Address, err *ce.Error)
 	HasPrimary(ctx context.Context, authID int64) (exists bool, err *ce.Error)
+	SetPrimary(ctx context.Context, data *models.SetPrimaryAddress) (address *models.Address, err *ce.Error)
 	UnsetPrimary(ctx context.Context, authID int64) (address *models.Address, err *ce.Error)
 }
 
@@ -259,6 +260,41 @@ func (r *addressRepository) HasPrimary(ctx context.Context, authID int64) (bool,
 	}
 
 	return true, nil
+}
+
+func (r *addressRepository) SetPrimary(ctx context.Context, data *models.SetPrimaryAddress) (*models.Address, *ce.Error) {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "SetPrimary")
+	defer span.End()
+
+	query := `
+		UPDATE addresses
+		SET is_primary = TRUE, updated_at = NOW()
+		WHERE address_id = $1 AND auth_id = $2
+		RETURNING
+			address_id, recipient, phone, label, notes, is_primary, country,
+			subdivision_1, subdivision_2, subdivision_3, subdivision_4,
+			street, postcode, latitude, longitude, created_at, updated_at
+	`
+
+	row := r.database.QueryRow(ctx, query, data.AddressID, data.AuthID)
+
+	var address models.Address
+	err := row.Scan(
+		&address.ID, &address.Recipient, &address.Phone, &address.Label, &address.Notes,
+		&address.IsPrimary, &address.Country, &address.Subdivision1, &address.Subdivision2,
+		&address.Subdivision3, &address.Subdivision4, &address.Street, &address.Postcode,
+		&address.Latitude, &address.Longitude, &address.CreatedAt, &address.UpdatedAt,
+	)
+	if err != nil {
+		e := fmt.Errorf("failed to set address primary: %w", err)
+		if errors.Is(err, ce.ErrDBReturnNoRows) {
+			return nil, ce.NewError(span, ce.CodeAddressNotFound, ce.MsgAddressNotFound, e)
+		}
+
+		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+
+	return &address, nil
 }
 
 func (r *addressRepository) UnsetPrimary(ctx context.Context, authID int64) (*models.Address, *ce.Error) {

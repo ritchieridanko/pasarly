@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserAddressService_CreateAddress_FullMethodName   = "/user.v1.UserAddressService/CreateAddress"
-	UserAddressService_GetAllAddresses_FullMethodName = "/user.v1.UserAddressService/GetAllAddresses"
-	UserAddressService_UpdateAddress_FullMethodName   = "/user.v1.UserAddressService/UpdateAddress"
+	UserAddressService_CreateAddress_FullMethodName     = "/user.v1.UserAddressService/CreateAddress"
+	UserAddressService_GetAllAddresses_FullMethodName   = "/user.v1.UserAddressService/GetAllAddresses"
+	UserAddressService_UpdateAddress_FullMethodName     = "/user.v1.UserAddressService/UpdateAddress"
+	UserAddressService_SetPrimaryAddress_FullMethodName = "/user.v1.UserAddressService/SetPrimaryAddress"
 )
 
 // UserAddressServiceClient is the client API for UserAddressService service.
@@ -31,6 +32,7 @@ type UserAddressServiceClient interface {
 	CreateAddress(ctx context.Context, in *CreateUserAddressRequest, opts ...grpc.CallOption) (*CreateUserAddressResponse, error)
 	GetAllAddresses(ctx context.Context, in *GetAllUserAddressesRequest, opts ...grpc.CallOption) (*GetAllUserAddressesResponse, error)
 	UpdateAddress(ctx context.Context, in *UpdateUserAddressRequest, opts ...grpc.CallOption) (*UpdateUserAddressResponse, error)
+	SetPrimaryAddress(ctx context.Context, in *SetPrimaryAddressRequest, opts ...grpc.CallOption) (*SetPrimaryAddressResponse, error)
 }
 
 type userAddressServiceClient struct {
@@ -71,6 +73,16 @@ func (c *userAddressServiceClient) UpdateAddress(ctx context.Context, in *Update
 	return out, nil
 }
 
+func (c *userAddressServiceClient) SetPrimaryAddress(ctx context.Context, in *SetPrimaryAddressRequest, opts ...grpc.CallOption) (*SetPrimaryAddressResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetPrimaryAddressResponse)
+	err := c.cc.Invoke(ctx, UserAddressService_SetPrimaryAddress_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserAddressServiceServer is the server API for UserAddressService service.
 // All implementations must embed UnimplementedUserAddressServiceServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type UserAddressServiceServer interface {
 	CreateAddress(context.Context, *CreateUserAddressRequest) (*CreateUserAddressResponse, error)
 	GetAllAddresses(context.Context, *GetAllUserAddressesRequest) (*GetAllUserAddressesResponse, error)
 	UpdateAddress(context.Context, *UpdateUserAddressRequest) (*UpdateUserAddressResponse, error)
+	SetPrimaryAddress(context.Context, *SetPrimaryAddressRequest) (*SetPrimaryAddressResponse, error)
 	mustEmbedUnimplementedUserAddressServiceServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedUserAddressServiceServer) GetAllAddresses(context.Context, *G
 }
 func (UnimplementedUserAddressServiceServer) UpdateAddress(context.Context, *UpdateUserAddressRequest) (*UpdateUserAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAddress not implemented")
+}
+func (UnimplementedUserAddressServiceServer) SetPrimaryAddress(context.Context, *SetPrimaryAddressRequest) (*SetPrimaryAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPrimaryAddress not implemented")
 }
 func (UnimplementedUserAddressServiceServer) mustEmbedUnimplementedUserAddressServiceServer() {}
 func (UnimplementedUserAddressServiceServer) testEmbeddedByValue()                            {}
@@ -172,6 +188,24 @@ func _UserAddressService_UpdateAddress_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserAddressService_SetPrimaryAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPrimaryAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserAddressServiceServer).SetPrimaryAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserAddressService_SetPrimaryAddress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserAddressServiceServer).SetPrimaryAddress(ctx, req.(*SetPrimaryAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserAddressService_ServiceDesc is the grpc.ServiceDesc for UserAddressService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var UserAddressService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateAddress",
 			Handler:    _UserAddressService_UpdateAddress_Handler,
+		},
+		{
+			MethodName: "SetPrimaryAddress",
+			Handler:    _UserAddressService_SetPrimaryAddress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

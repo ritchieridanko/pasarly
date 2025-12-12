@@ -80,8 +80,19 @@ message UpdateUserAddressResponse {
   UserAddress address = 1;
 }
 
+message SetPrimaryAddressRequest {
+  int64 auth_id = 1;
+  int64 address_id = 2;
+}
+
+message SetPrimaryAddressResponse {
+  UserAddress new_primary_address = 1;
+  UserAddress old_primary_address = 2;
+}
+
 service UserAddressService {
   rpc CreateAddress (CreateUserAddressRequest) returns (CreateUserAddressResponse);
   rpc GetAllAddresses (GetAllUserAddressesRequest) returns (GetAllUserAddressesResponse);
   rpc UpdateAddress (UpdateUserAddressRequest) returns (UpdateUserAddressResponse);
+  rpc SetPrimaryAddress (SetPrimaryAddressRequest) returns (SetPrimaryAddressResponse);
 }
