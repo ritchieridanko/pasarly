@@ -43,19 +43,7 @@ func (h *UserHandler) UpsertUser(ctx context.Context, req *apis.UpsertUserReques
 		return nil, err.ToGRPCStatus()
 	}
 
-	return &apis.UpsertUserResponse{
-		User: &apis.User{
-			Id:             user.ID,
-			Name:           user.Name,
-			Bio:            utils.WrapString(user.Bio),
-			Sex:            utils.WrapString(user.Sex),
-			Birthdate:      utils.WrapTime(user.Birthdate),
-			Phone:          utils.WrapString(user.Phone),
-			ProfilePicture: utils.WrapString(user.ProfilePicture),
-			CreatedAt:      timestamppb.New(user.CreatedAt),
-			UpdatedAt:      timestamppb.New(user.UpdatedAt),
-		},
-	}, nil
+	return &apis.UpsertUserResponse{User: h.toUser(user)}, nil
 }
 
 func (h *UserHandler) GetUser(ctx context.Context, req *apis.GetUserRequest) (*apis.GetUserResponse, error) {
@@ -68,19 +56,7 @@ func (h *UserHandler) GetUser(ctx context.Context, req *apis.GetUserRequest) (*a
 		return nil, err.ToGRPCStatus()
 	}
 
-	return &apis.GetUserResponse{
-		User: &apis.User{
-			Id:             user.ID,
-			Name:           user.Name,
-			Bio:            utils.WrapString(user.Bio),
-			Sex:            utils.WrapString(user.Sex),
-			Birthdate:      utils.WrapTime(user.Birthdate),
-			Phone:          utils.WrapString(user.Phone),
-			ProfilePicture: utils.WrapString(user.ProfilePicture),
-			CreatedAt:      timestamppb.New(user.CreatedAt),
-			UpdatedAt:      timestamppb.New(user.UpdatedAt),
-		},
-	}, nil
+	return &apis.GetUserResponse{User: h.toUser(user)}, nil
 }
 
 func (h *UserHandler) UpdateUser(ctx context.Context, req *apis.UpdateUserRequest) (*apis.UpdateUserResponse, error) {
@@ -102,19 +78,7 @@ func (h *UserHandler) UpdateUser(ctx context.Context, req *apis.UpdateUserReques
 		return nil, err.ToGRPCStatus()
 	}
 
-	return &apis.UpdateUserResponse{
-		User: &apis.User{
-			Id:             user.ID,
-			Name:           user.Name,
-			Bio:            utils.WrapString(user.Bio),
-			Sex:            utils.WrapString(user.Sex),
-			Birthdate:      utils.WrapTime(user.Birthdate),
-			Phone:          utils.WrapString(user.Phone),
-			ProfilePicture: utils.WrapString(user.ProfilePicture),
-			CreatedAt:      timestamppb.New(user.CreatedAt),
-			UpdatedAt:      timestamppb.New(user.UpdatedAt),
-		},
-	}, nil
+	return &apis.UpdateUserResponse{User: h.toUser(user)}, nil
 }
 
 func (h *UserHandler) UpdateProfilePicture(ctx context.Context, req *apis.UpdateProfilePictureRequest) (*apis.UpdateProfilePictureResponse, error) {
@@ -133,4 +97,19 @@ func (h *UserHandler) UpdateProfilePicture(ctx context.Context, req *apis.Update
 	}
 
 	return &apis.UpdateProfilePictureResponse{ProfilePicture: profilePicture}, nil
+}
+
+func (h *UserHandler) toUser(u *models.User) *apis.User {
+	user := apis.User{
+		Id:             u.ID,
+		Name:           u.Name,
+		Bio:            utils.WrapString(u.Bio),
+		Sex:            utils.WrapString(u.Sex),
+		Birthdate:      utils.WrapTime(u.Birthdate),
+		Phone:          utils.WrapString(u.Phone),
+		ProfilePicture: utils.WrapString(u.ProfilePicture),
+		CreatedAt:      timestamppb.New(u.CreatedAt),
+		UpdatedAt:      timestamppb.New(u.UpdatedAt),
+	}
+	return &user
 }

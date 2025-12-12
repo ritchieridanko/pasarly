@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/ritchieridanko/pasarly/backend/shared/apis/v1;apis";
+
+message UserAddress {
+  int64 id = 1;
+  string recipient = 2;
+  string phone = 3;
+  string label = 4;
+  google.protobuf.StringValue notes = 5;
+  bool is_primary = 6;
+  string country = 7;
+  google.protobuf.StringValue subdivision_1 = 8;
+  google.protobuf.StringValue subdivision_2 = 9;
+  google.protobuf.StringValue subdivision_3 = 10;
+  google.protobuf.StringValue subdivision_4 = 11;
+  string street = 12;
+  string postcode = 13;
+  double latitude = 14;
+  double longitude = 15;
+  google.protobuf.Timestamp created_at = 16;
+  google.protobuf.Timestamp updated_at = 17;
+}
+
+message CreateUserAddressRequest {
+  int64 auth_id = 1;
+  string recipient = 2;
+  string phone = 3;
+  string label = 4;
+  google.protobuf.StringValue notes = 5;
+  bool is_primary = 6;
+  string country = 7;
+  google.protobuf.StringValue subdivision_1 = 8;
+  google.protobuf.StringValue subdivision_2 = 9;
+  google.protobuf.StringValue subdivision_3 = 10;
+  google.protobuf.StringValue subdivision_4 = 11;
+  string street = 12;
+  string postcode = 13;
+  double latitude = 14;
+  double longitude = 15;
+}
+
+message CreateUserAddressResponse {
+  UserAddress address = 1;
+  UserAddress old_primary_address = 2;
+}
+
+service UserAddressService {
+  rpc CreateAddress (CreateUserAddressRequest) returns (CreateUserAddressResponse);
+}

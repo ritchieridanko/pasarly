@@ -21,10 +21,13 @@ type Container struct {
 	logger     *logger.Logger
 	acs        *subscriber.Subscriber
 	ur         repositories.UserRepository
+	ar         repositories.AddressRepository
 	up         processors.UserProcessor
 	validator  *utils.Validator
 	uu         usecases.UserUsecase
+	au         usecases.AddressUsecase
 	uh         *handlers.UserHandler
+	ah         *handlers.AddressHandler
 	server     *server.Server
 }
 
@@ -39,6 +42,7 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 
 	// Repositories
 	ur := repositories.NewUserRepository(db)
+	ar := repositories.NewAddressRepository(db)
 
 	// Processors
 	up := processors.NewUserProcessor(ur, tx)
@@ -48,12 +52,14 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 
 	// Usecases
 	uu := usecases.NewUserUsecase(ur, v)
+	au := usecases.NewAddressUsecase(ar, tx, v)
 
 	// Handlers
 	uh := handlers.NewUserHandler(uu, l)
+	ah := handlers.NewAddressHandler(au, l)
 
 	// Server
-	s := server.Init(&cfg.Server, uh, l)
+	s := server.Init(&cfg.Server, l, uh, ah)
 
 	return &Container{
 		config:     cfg,
@@ -62,10 +68,13 @@ func Init(cfg *configs.Config, i *infra.Infra) *Container {
 		logger:     l,
 		acs:        acs,
 		ur:         ur,
+		ar:         ar,
 		up:         up,
 		validator:  v,
 		uu:         uu,
+		au:         au,
 		uh:         uh,
+		ah:         ah,
 		server:     s,
 	}
 }

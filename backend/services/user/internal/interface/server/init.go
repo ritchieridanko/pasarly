@@ -18,10 +18,11 @@ type Server struct {
 	logger *logger.Logger
 }
 
-func Init(cfg *configs.Server, uh *handlers.UserHandler, l *logger.Logger) *Server {
+func Init(cfg *configs.Server, l *logger.Logger, uh *handlers.UserHandler, ah *handlers.AddressHandler) *Server {
 	s := grpc.NewServer()
 
 	apis.RegisterUserServiceServer(s, uh)
+	apis.RegisterUserAddressServiceServer(s, ah)
 
 	return &Server{config: cfg, server: s, logger: l}
 }
