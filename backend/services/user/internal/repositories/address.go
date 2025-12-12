@@ -15,6 +15,7 @@ const addressErrTracer string = "repository.address"
 
 type AddressRepository interface {
 	CreateAddress(ctx context.Context, data *models.CreateAddress) (address *models.Address, err *ce.Error)
+	GetAllAddresses(ctx context.Context, authID int64) (addresses []models.Address, err *ce.Error)
 	HasPrimary(ctx context.Context, authID int64) (exists bool, err *ce.Error)
 	UnsetPrimary(ctx context.Context, authID int64) (address *models.Address, err *ce.Error)
 }
@@ -67,6 +68,57 @@ func (r *addressRepository) CreateAddress(ctx context.Context, data *models.Crea
 	}
 
 	return &address, nil
+}
+
+func (r *addressRepository) GetAllAddresses(ctx context.Context, authID int64) ([]models.Address, *ce.Error) {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "GetAllAddresses")
+	defer span.End()
+
+	query := `
+		SELECT
+			address_id, recipient, phone, label, notes, is_primary, country,
+			subdivision_1, subdivision_2, subdivision_3, subdivision_4,
+			street, postcode, latitude, longitude, created_at, updated_at
+		FROM addresses
+		WHERE auth_id = $1
+		ORDER BY is_primary DESC, updated_at DESC
+	`
+
+	rows, err := r.database.QueryAll(ctx, query, authID)
+	if err != nil {
+		e := fmt.Errorf("failed to fetch all addresses: %w", err)
+		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+	defer rows.Close()
+
+	addresses := make([]models.Address, 0)
+	for rows.Next() {
+		var address models.Address
+
+		err := rows.Scan(
+			&address.ID, &address.Recipient, &address.Phone, &address.Label, &address.Notes,
+			&address.IsPrimary, &address.Country, &address.Subdivision1, &address.Subdivision2,
+			&address.Subdivision3, &address.Subdivision4, &address.Street, &address.Postcode,
+			&address.Latitude, &address.Longitude, &address.CreatedAt, &address.UpdatedAt,
+		)
+		if err != nil {
+			e := fmt.Errorf("failed to fetch all addresses: %w", err)
+			return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+		}
+
+		addresses = append(addresses, address)
+	}
+
+	if err := rows.Err(); err != nil {
+		e := fmt.Errorf("failed to fetch all addresses: %w", err)
+		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+
+	if len(addresses) == 0 {
+		return []models.Address{}, nil
+	}
+
+	return addresses, nil
 }
 
 func (r *addressRepository) HasPrimary(ctx context.Context, authID int64) (bool, *ce.Error) {

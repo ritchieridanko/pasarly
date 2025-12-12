@@ -403,6 +403,94 @@ func (x *CreateUserAddressResponse) GetOldPrimaryAddress() *UserAddress {
 	return nil
 }
 
+type GetAllUserAddressesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AuthId        int64                  `protobuf:"varint,1,opt,name=auth_id,json=authId,proto3" json:"auth_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAllUserAddressesRequest) Reset() {
+	*x = GetAllUserAddressesRequest{}
+	mi := &file_v1_user_address_api_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAllUserAddressesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllUserAddressesRequest) ProtoMessage() {}
+
+func (x *GetAllUserAddressesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_user_address_api_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllUserAddressesRequest.ProtoReflect.Descriptor instead.
+func (*GetAllUserAddressesRequest) Descriptor() ([]byte, []int) {
+	return file_v1_user_address_api_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetAllUserAddressesRequest) GetAuthId() int64 {
+	if x != nil {
+		return x.AuthId
+	}
+	return 0
+}
+
+type GetAllUserAddressesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Addresses     []*UserAddress         `protobuf:"bytes,1,rep,name=addresses,proto3" json:"addresses,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAllUserAddressesResponse) Reset() {
+	*x = GetAllUserAddressesResponse{}
+	mi := &file_v1_user_address_api_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAllUserAddressesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllUserAddressesResponse) ProtoMessage() {}
+
+func (x *GetAllUserAddressesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_user_address_api_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllUserAddressesResponse.ProtoReflect.Descriptor instead.
+func (*GetAllUserAddressesResponse) Descriptor() ([]byte, []int) {
+	return file_v1_user_address_api_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetAllUserAddressesResponse) GetAddresses() []*UserAddress {
+	if x != nil {
+		return x.Addresses
+	}
+	return nil
+}
+
 var File_v1_user_address_api_proto protoreflect.FileDescriptor
 
 const file_v1_user_address_api_proto_rawDesc = "" +
@@ -450,9 +538,14 @@ const file_v1_user_address_api_proto_rawDesc = "" +
 	"\tlongitude\x18\x0f \x01(\x01R\tlongitude\"\x91\x01\n" +
 	"\x19CreateUserAddressResponse\x12.\n" +
 	"\aaddress\x18\x01 \x01(\v2\x14.user.v1.UserAddressR\aaddress\x12D\n" +
-	"\x13old_primary_address\x18\x02 \x01(\v2\x14.user.v1.UserAddressR\x11oldPrimaryAddress2l\n" +
+	"\x13old_primary_address\x18\x02 \x01(\v2\x14.user.v1.UserAddressR\x11oldPrimaryAddress\"5\n" +
+	"\x1aGetAllUserAddressesRequest\x12\x17\n" +
+	"\aauth_id\x18\x01 \x01(\x03R\x06authId\"Q\n" +
+	"\x1bGetAllUserAddressesResponse\x122\n" +
+	"\taddresses\x18\x01 \x03(\v2\x14.user.v1.UserAddressR\taddresses2\xca\x01\n" +
 	"\x12UserAddressService\x12V\n" +
-	"\rCreateAddress\x12!.user.v1.CreateUserAddressRequest\x1a\".user.v1.CreateUserAddressResponseB?Z=github.com/ritchieridanko/pasarly/backend/shared/apis/v1;apisb\x06proto3"
+	"\rCreateAddress\x12!.user.v1.CreateUserAddressRequest\x1a\".user.v1.CreateUserAddressResponse\x12\\\n" +
+	"\x0fGetAllAddresses\x12#.user.v1.GetAllUserAddressesRequest\x1a$.user.v1.GetAllUserAddressesResponseB?Z=github.com/ritchieridanko/pasarly/backend/shared/apis/v1;apisb\x06proto3"
 
 var (
 	file_v1_user_address_api_proto_rawDescOnce sync.Once
@@ -466,36 +559,41 @@ func file_v1_user_address_api_proto_rawDescGZIP() []byte {
 	return file_v1_user_address_api_proto_rawDescData
 }
 
-var file_v1_user_address_api_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_v1_user_address_api_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_v1_user_address_api_proto_goTypes = []any{
-	(*UserAddress)(nil),               // 0: user.v1.UserAddress
-	(*CreateUserAddressRequest)(nil),  // 1: user.v1.CreateUserAddressRequest
-	(*CreateUserAddressResponse)(nil), // 2: user.v1.CreateUserAddressResponse
-	(*wrappers.StringValue)(nil),      // 3: google.protobuf.StringValue
-	(*timestamp.Timestamp)(nil),       // 4: google.protobuf.Timestamp
+	(*UserAddress)(nil),                 // 0: user.v1.UserAddress
+	(*CreateUserAddressRequest)(nil),    // 1: user.v1.CreateUserAddressRequest
+	(*CreateUserAddressResponse)(nil),   // 2: user.v1.CreateUserAddressResponse
+	(*GetAllUserAddressesRequest)(nil),  // 3: user.v1.GetAllUserAddressesRequest
+	(*GetAllUserAddressesResponse)(nil), // 4: user.v1.GetAllUserAddressesResponse
+	(*wrappers.StringValue)(nil),        // 5: google.protobuf.StringValue
+	(*timestamp.Timestamp)(nil),         // 6: google.protobuf.Timestamp
 }
 var file_v1_user_address_api_proto_depIdxs = []int32{
-	3,  // 0: user.v1.UserAddress.notes:type_name -> google.protobuf.StringValue
-	3,  // 1: user.v1.UserAddress.subdivision_1:type_name -> google.protobuf.StringValue
-	3,  // 2: user.v1.UserAddress.subdivision_2:type_name -> google.protobuf.StringValue
-	3,  // 3: user.v1.UserAddress.subdivision_3:type_name -> google.protobuf.StringValue
-	3,  // 4: user.v1.UserAddress.subdivision_4:type_name -> google.protobuf.StringValue
-	4,  // 5: user.v1.UserAddress.created_at:type_name -> google.protobuf.Timestamp
-	4,  // 6: user.v1.UserAddress.updated_at:type_name -> google.protobuf.Timestamp
-	3,  // 7: user.v1.CreateUserAddressRequest.notes:type_name -> google.protobuf.StringValue
-	3,  // 8: user.v1.CreateUserAddressRequest.subdivision_1:type_name -> google.protobuf.StringValue
-	3,  // 9: user.v1.CreateUserAddressRequest.subdivision_2:type_name -> google.protobuf.StringValue
-	3,  // 10: user.v1.CreateUserAddressRequest.subdivision_3:type_name -> google.protobuf.StringValue
-	3,  // 11: user.v1.CreateUserAddressRequest.subdivision_4:type_name -> google.protobuf.StringValue
+	5,  // 0: user.v1.UserAddress.notes:type_name -> google.protobuf.StringValue
+	5,  // 1: user.v1.UserAddress.subdivision_1:type_name -> google.protobuf.StringValue
+	5,  // 2: user.v1.UserAddress.subdivision_2:type_name -> google.protobuf.StringValue
+	5,  // 3: user.v1.UserAddress.subdivision_3:type_name -> google.protobuf.StringValue
+	5,  // 4: user.v1.UserAddress.subdivision_4:type_name -> google.protobuf.StringValue
+	6,  // 5: user.v1.UserAddress.created_at:type_name -> google.protobuf.Timestamp
+	6,  // 6: user.v1.UserAddress.updated_at:type_name -> google.protobuf.Timestamp
+	5,  // 7: user.v1.CreateUserAddressRequest.notes:type_name -> google.protobuf.StringValue
+	5,  // 8: user.v1.CreateUserAddressRequest.subdivision_1:type_name -> google.protobuf.StringValue
+	5,  // 9: user.v1.CreateUserAddressRequest.subdivision_2:type_name -> google.protobuf.StringValue
+	5,  // 10: user.v1.CreateUserAddressRequest.subdivision_3:type_name -> google.protobuf.StringValue
+	5,  // 11: user.v1.CreateUserAddressRequest.subdivision_4:type_name -> google.protobuf.StringValue
 	0,  // 12: user.v1.CreateUserAddressResponse.address:type_name -> user.v1.UserAddress
 	0,  // 13: user.v1.CreateUserAddressResponse.old_primary_address:type_name -> user.v1.UserAddress
-	1,  // 14: user.v1.UserAddressService.CreateAddress:input_type -> user.v1.CreateUserAddressRequest
-	2,  // 15: user.v1.UserAddressService.CreateAddress:output_type -> user.v1.CreateUserAddressResponse
-	15, // [15:16] is the sub-list for method output_type
-	14, // [14:15] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	0,  // 14: user.v1.GetAllUserAddressesResponse.addresses:type_name -> user.v1.UserAddress
+	1,  // 15: user.v1.UserAddressService.CreateAddress:input_type -> user.v1.CreateUserAddressRequest
+	3,  // 16: user.v1.UserAddressService.GetAllAddresses:input_type -> user.v1.GetAllUserAddressesRequest
+	2,  // 17: user.v1.UserAddressService.CreateAddress:output_type -> user.v1.CreateUserAddressResponse
+	4,  // 18: user.v1.UserAddressService.GetAllAddresses:output_type -> user.v1.GetAllUserAddressesResponse
+	17, // [17:19] is the sub-list for method output_type
+	15, // [15:17] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_v1_user_address_api_proto_init() }
@@ -509,7 +607,7 @@ func file_v1_user_address_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_user_address_api_proto_rawDesc), len(file_v1_user_address_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

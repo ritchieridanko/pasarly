@@ -17,6 +17,7 @@ const addressErrTracer string = "usecase.address"
 
 type AddressUsecase interface {
 	CreateAddress(ctx context.Context, data *models.CreateAddress) (address *models.Address, oldPrimaryAddress *models.Address, err *ce.Error)
+	GetAllAddresses(ctx context.Context, authID int64) (addresses []models.Address, err *ce.Error)
 }
 
 type addressUsecase struct {
@@ -108,4 +109,11 @@ func (u *addressUsecase) CreateAddress(ctx context.Context, data *models.CreateA
 	})
 
 	return address, oldPrimaryAddress, err
+}
+
+func (u *addressUsecase) GetAllAddresses(ctx context.Context, authID int64) ([]models.Address, *ce.Error) {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "GetAllAddresses")
+	defer span.End()
+
+	return u.ar.GetAllAddresses(ctx, authID)
 }

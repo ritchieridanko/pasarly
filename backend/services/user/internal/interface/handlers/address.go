@@ -64,6 +64,25 @@ func (h *AddressHandler) CreateAddress(ctx context.Context, req *apis.CreateUser
 	}, nil
 }
 
+func (h *AddressHandler) GetAllAddresses(ctx context.Context, req *apis.GetAllUserAddressesRequest) (*apis.GetAllUserAddressesResponse, error) {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "GetAllAddresses")
+	defer span.End()
+
+	addresses, err := h.au.GetAllAddresses(ctx, req.GetAuthId())
+	if err != nil {
+		h.logger.Sugar().Errorln(err.Error())
+		return nil, err.ToGRPCStatus()
+	}
+
+	addrs := make([]*apis.UserAddress, 0, len(addresses))
+	for _, address := range addresses {
+		addr := h.toAddress(&address)
+		addrs = append(addrs, addr)
+	}
+
+	return &apis.GetAllUserAddressesResponse{Addresses: addrs}, nil
+}
+
 func (h *AddressHandler) toAddress(a *models.Address) *apis.UserAddress {
 	address := apis.UserAddress{
 		Id:            a.ID,

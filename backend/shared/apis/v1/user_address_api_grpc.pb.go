@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserAddressService_CreateAddress_FullMethodName = "/user.v1.UserAddressService/CreateAddress"
+	UserAddressService_CreateAddress_FullMethodName   = "/user.v1.UserAddressService/CreateAddress"
+	UserAddressService_GetAllAddresses_FullMethodName = "/user.v1.UserAddressService/GetAllAddresses"
 )
 
 // UserAddressServiceClient is the client API for UserAddressService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserAddressServiceClient interface {
 	CreateAddress(ctx context.Context, in *CreateUserAddressRequest, opts ...grpc.CallOption) (*CreateUserAddressResponse, error)
+	GetAllAddresses(ctx context.Context, in *GetAllUserAddressesRequest, opts ...grpc.CallOption) (*GetAllUserAddressesResponse, error)
 }
 
 type userAddressServiceClient struct {
@@ -47,11 +49,22 @@ func (c *userAddressServiceClient) CreateAddress(ctx context.Context, in *Create
 	return out, nil
 }
 
+func (c *userAddressServiceClient) GetAllAddresses(ctx context.Context, in *GetAllUserAddressesRequest, opts ...grpc.CallOption) (*GetAllUserAddressesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllUserAddressesResponse)
+	err := c.cc.Invoke(ctx, UserAddressService_GetAllAddresses_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserAddressServiceServer is the server API for UserAddressService service.
 // All implementations must embed UnimplementedUserAddressServiceServer
 // for forward compatibility.
 type UserAddressServiceServer interface {
 	CreateAddress(context.Context, *CreateUserAddressRequest) (*CreateUserAddressResponse, error)
+	GetAllAddresses(context.Context, *GetAllUserAddressesRequest) (*GetAllUserAddressesResponse, error)
 	mustEmbedUnimplementedUserAddressServiceServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedUserAddressServiceServer struct{}
 
 func (UnimplementedUserAddressServiceServer) CreateAddress(context.Context, *CreateUserAddressRequest) (*CreateUserAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAddress not implemented")
+}
+func (UnimplementedUserAddressServiceServer) GetAllAddresses(context.Context, *GetAllUserAddressesRequest) (*GetAllUserAddressesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllAddresses not implemented")
 }
 func (UnimplementedUserAddressServiceServer) mustEmbedUnimplementedUserAddressServiceServer() {}
 func (UnimplementedUserAddressServiceServer) testEmbeddedByValue()                            {}
@@ -104,6 +120,24 @@ func _UserAddressService_CreateAddress_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserAddressService_GetAllAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllUserAddressesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserAddressServiceServer).GetAllAddresses(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserAddressService_GetAllAddresses_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserAddressServiceServer).GetAllAddresses(ctx, req.(*GetAllUserAddressesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserAddressService_ServiceDesc is the grpc.ServiceDesc for UserAddressService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +148,10 @@ var UserAddressService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateAddress",
 			Handler:    _UserAddressService_CreateAddress_Handler,
+		},
+		{
+			MethodName: "GetAllAddresses",
+			Handler:    _UserAddressService_GetAllAddresses_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -30,6 +30,11 @@ func (d *Database) Execute(ctx context.Context, query string, args ...any) error
 	return nil
 }
 
+func (d *Database) QueryAll(ctx context.Context, query string, args ...any) (pgx.Rows, error) {
+	e := d.executor(ctx)
+	return e.Query(ctx, query, args...)
+}
+
 func (d *Database) QueryRow(ctx context.Context, query string, args ...any) pgx.Row {
 	e := d.executor(ctx)
 	return e.QueryRow(ctx, query, args...)

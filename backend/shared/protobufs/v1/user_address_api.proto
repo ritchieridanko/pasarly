@@ -50,6 +50,15 @@ message CreateUserAddressResponse {
   UserAddress old_primary_address = 2;
 }
 
+message GetAllUserAddressesRequest {
+  int64 auth_id = 1;
+}
+
+message GetAllUserAddressesResponse {
+  repeated UserAddress addresses = 1;
+}
+
 service UserAddressService {
   rpc CreateAddress (CreateUserAddressRequest) returns (CreateUserAddressResponse);
+  rpc GetAllAddresses (GetAllUserAddressesRequest) returns (GetAllUserAddressesResponse);
 }
