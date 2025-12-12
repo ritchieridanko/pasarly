@@ -9,6 +9,7 @@ import (
 
 // Internal error codes
 const (
+	CodeAddressNotFound    errCode = "ADDRESS_NOT_FOUND_ERR"
 	CodeAuthNotFound       errCode = "AUTH_NOT_FOUND_ERR"
 	CodeCacheQueryExec     errCode = "CACHE_QUERY_EXEC_ERR"
 	CodeCacheScriptExec    errCode = "CACHE_SCRIPT_EXEC_ERR"
@@ -37,6 +38,7 @@ const (
 
 // External error messages
 const (
+	MsgAddressNotFound        string = "Address not found"
 	MsgEmailAlreadyRegistered string = "Email is already registered"
 	MsgInternalServer         string = "Internal server error"
 	MsgInvalidCredentials     string = "Invalid credentials"

@@ -58,7 +58,30 @@ message GetAllUserAddressesResponse {
   repeated UserAddress addresses = 1;
 }
 
+message UpdateUserAddressRequest {
+  int64 auth_id = 1;
+  int64 address_id = 2;
+  google.protobuf.StringValue recipient = 3;
+  google.protobuf.StringValue phone = 4;
+  google.protobuf.StringValue label = 5;
+  google.protobuf.StringValue notes = 6;
+  google.protobuf.StringValue country = 7;
+  google.protobuf.StringValue subdivision_1 = 8;
+  google.protobuf.StringValue subdivision_2 = 9;
+  google.protobuf.StringValue subdivision_3 = 10;
+  google.protobuf.StringValue subdivision_4 = 11;
+  google.protobuf.StringValue street = 12;
+  google.protobuf.StringValue postcode = 13;
+  google.protobuf.DoubleValue latitude = 14;
+  google.protobuf.DoubleValue longitude = 15;
+}
+
+message UpdateUserAddressResponse {
+  UserAddress address = 1;
+}
+
 service UserAddressService {
   rpc CreateAddress (CreateUserAddressRequest) returns (CreateUserAddressResponse);
   rpc GetAllAddresses (GetAllUserAddressesRequest) returns (GetAllUserAddressesResponse);
+  rpc UpdateAddress (UpdateUserAddressRequest) returns (UpdateUserAddressResponse);
 }

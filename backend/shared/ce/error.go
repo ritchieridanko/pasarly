@@ -39,7 +39,7 @@ func (e *Error) ToGRPCStatus() error {
 		return status.Error(gc.InvalidArgument, e.Message)
 	case CodeAuthNotFound, CodeInvalidCredentials, CodeSessionNotFound, CodeWrongSignInMethod:
 		return status.Error(gc.Unauthenticated, e.Message)
-	case CodeUserNotFound:
+	case CodeAddressNotFound, CodeUserNotFound:
 		return status.Error(gc.NotFound, e.Message)
 	case CodeDataConflict:
 		return status.Error(gc.AlreadyExists, e.Message)
@@ -64,7 +64,7 @@ func (e *Error) ToHTTPStatus() int {
 		CodeUnauthenticated,
 		CodeUnauthorized:
 		return http.StatusUnauthorized
-	case CodeNotFound, CodeUserNotFound:
+	case CodeAddressNotFound, CodeNotFound, CodeUserNotFound:
 		return http.StatusNotFound
 	case CodeDataConflict:
 		return http.StatusConflict

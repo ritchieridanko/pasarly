@@ -18,6 +18,7 @@ const addressErrTracer string = "usecase.address"
 type AddressUsecase interface {
 	CreateAddress(ctx context.Context, data *models.CreateAddress) (address *models.Address, oldPrimaryAddress *models.Address, err *ce.Error)
 	GetAllAddresses(ctx context.Context, authID int64) (addresses []models.Address, err *ce.Error)
+	UpdateAddress(ctx context.Context, data *models.UpdateAddress) (address *models.Address, err *ce.Error)
 }
 
 type addressUsecase struct {
@@ -116,4 +117,65 @@ func (u *addressUsecase) GetAllAddresses(ctx context.Context, authID int64) ([]m
 	defer span.End()
 
 	return u.ar.GetAllAddresses(ctx, authID)
+}
+
+func (u *addressUsecase) UpdateAddress(ctx context.Context, data *models.UpdateAddress) (*models.Address, *ce.Error) {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "UpdateAddress")
+	defer span.End()
+
+	// Validations
+	if ok, why := u.validator.Name(data.Recipient, true); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrPhone(data.Phone, true); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrLabel(data.Label, true); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrNotes(data.Notes); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrCountry(data.Country, true); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrSubdivision(data.Subdivision1); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrSubdivision(data.Subdivision2); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrSubdivision(data.Subdivision3); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrSubdivision(data.Subdivision4); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrStreet(data.Street, true); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrPostcode(data.Postcode, true); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrLatitude(data.Latitude, true); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+	if ok, why := u.validator.AddrLongitude(data.Longitude, true); !ok {
+		err := fmt.Errorf("failed to update address: %w", errors.New(why))
+		return nil, ce.NewError(span, ce.CodeInvalidPayload, why, err)
+	}
+
+	return u.ar.UpdateAddress(ctx, data)
 }

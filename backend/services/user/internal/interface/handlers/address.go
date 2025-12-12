@@ -83,6 +83,37 @@ func (h *AddressHandler) GetAllAddresses(ctx context.Context, req *apis.GetAllUs
 	return &apis.GetAllUserAddressesResponse{Addresses: addrs}, nil
 }
 
+func (h *AddressHandler) UpdateAddress(ctx context.Context, req *apis.UpdateUserAddressRequest) (*apis.UpdateUserAddressResponse, error) {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "UpdateAddress")
+	defer span.End()
+
+	data := models.UpdateAddress{
+		AuthID:       req.GetAuthId(),
+		AddressID:    req.GetAddressId(),
+		Recipient:    utils.TrimSpacePtr(utils.UnwrapString(req.GetRecipient())),
+		Phone:        utils.TrimSpacePtr(utils.UnwrapString(req.GetPhone())),
+		Label:        utils.TrimSpacePtr(utils.UnwrapString(req.GetLabel())),
+		Notes:        utils.UnwrapString(req.GetNotes()),
+		Country:      utils.NormalizeStringPtr(utils.UnwrapString(req.GetCountry())),
+		Subdivision1: utils.NormalizeStringPtr(utils.UnwrapString(req.GetSubdivision_1())),
+		Subdivision2: utils.NormalizeStringPtr(utils.UnwrapString(req.GetSubdivision_2())),
+		Subdivision3: utils.NormalizeStringPtr(utils.UnwrapString(req.GetSubdivision_3())),
+		Subdivision4: utils.NormalizeStringPtr(utils.UnwrapString(req.GetSubdivision_4())),
+		Street:       utils.TrimSpacePtr(utils.UnwrapString(req.GetStreet())),
+		Postcode:     utils.TrimSpacePtr(utils.UnwrapString(req.GetPostcode())),
+		Latitude:     utils.UnwrapDouble(req.GetLatitude()),
+		Longitude:    utils.UnwrapDouble(req.GetLongitude()),
+	}
+
+	address, err := h.au.UpdateAddress(ctx, &data)
+	if err != nil {
+		h.logger.Sugar().Errorln(err.Error())
+		return nil, err.ToGRPCStatus()
+	}
+
+	return &apis.UpdateUserAddressResponse{Address: h.toAddress(address)}, nil
+}
+
 func (h *AddressHandler) toAddress(a *models.Address) *apis.UserAddress {
 	address := apis.UserAddress{
 		Id:            a.ID,

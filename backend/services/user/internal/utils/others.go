@@ -60,6 +60,21 @@ func TraceErr(s trace.Span, err error, message string) {
 	s.SetStatus(codes.Error, message)
 }
 
+func TrimSpacePtr(s *string) *string {
+	if s == nil {
+		return nil
+	}
+	res := strings.TrimSpace(*s)
+	return &res
+}
+
+func UnwrapDouble(dv *wrappers.DoubleValue) *float64 {
+	if dv != nil {
+		return &dv.Value
+	}
+	return nil
+}
+
 func UnwrapString(sv *wrappers.StringValue) *string {
 	if sv != nil {
 		return &sv.Value

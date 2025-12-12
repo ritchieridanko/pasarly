@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	UserAddressService_CreateAddress_FullMethodName   = "/user.v1.UserAddressService/CreateAddress"
 	UserAddressService_GetAllAddresses_FullMethodName = "/user.v1.UserAddressService/GetAllAddresses"
+	UserAddressService_UpdateAddress_FullMethodName   = "/user.v1.UserAddressService/UpdateAddress"
 )
 
 // UserAddressServiceClient is the client API for UserAddressService service.
@@ -29,6 +30,7 @@ const (
 type UserAddressServiceClient interface {
 	CreateAddress(ctx context.Context, in *CreateUserAddressRequest, opts ...grpc.CallOption) (*CreateUserAddressResponse, error)
 	GetAllAddresses(ctx context.Context, in *GetAllUserAddressesRequest, opts ...grpc.CallOption) (*GetAllUserAddressesResponse, error)
+	UpdateAddress(ctx context.Context, in *UpdateUserAddressRequest, opts ...grpc.CallOption) (*UpdateUserAddressResponse, error)
 }
 
 type userAddressServiceClient struct {
@@ -59,12 +61,23 @@ func (c *userAddressServiceClient) GetAllAddresses(ctx context.Context, in *GetA
 	return out, nil
 }
 
+func (c *userAddressServiceClient) UpdateAddress(ctx context.Context, in *UpdateUserAddressRequest, opts ...grpc.CallOption) (*UpdateUserAddressResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateUserAddressResponse)
+	err := c.cc.Invoke(ctx, UserAddressService_UpdateAddress_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserAddressServiceServer is the server API for UserAddressService service.
 // All implementations must embed UnimplementedUserAddressServiceServer
 // for forward compatibility.
 type UserAddressServiceServer interface {
 	CreateAddress(context.Context, *CreateUserAddressRequest) (*CreateUserAddressResponse, error)
 	GetAllAddresses(context.Context, *GetAllUserAddressesRequest) (*GetAllUserAddressesResponse, error)
+	UpdateAddress(context.Context, *UpdateUserAddressRequest) (*UpdateUserAddressResponse, error)
 	mustEmbedUnimplementedUserAddressServiceServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedUserAddressServiceServer) CreateAddress(context.Context, *Cre
 }
 func (UnimplementedUserAddressServiceServer) GetAllAddresses(context.Context, *GetAllUserAddressesRequest) (*GetAllUserAddressesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllAddresses not implemented")
+}
+func (UnimplementedUserAddressServiceServer) UpdateAddress(context.Context, *UpdateUserAddressRequest) (*UpdateUserAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAddress not implemented")
 }
 func (UnimplementedUserAddressServiceServer) mustEmbedUnimplementedUserAddressServiceServer() {}
 func (UnimplementedUserAddressServiceServer) testEmbeddedByValue()                            {}
@@ -138,6 +154,24 @@ func _UserAddressService_GetAllAddresses_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserAddressService_UpdateAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserAddressServiceServer).UpdateAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserAddressService_UpdateAddress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserAddressServiceServer).UpdateAddress(ctx, req.(*UpdateUserAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserAddressService_ServiceDesc is the grpc.ServiceDesc for UserAddressService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var UserAddressService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllAddresses",
 			Handler:    _UserAddressService_GetAllAddresses_Handler,
+		},
+		{
+			MethodName: "UpdateAddress",
+			Handler:    _UserAddressService_UpdateAddress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

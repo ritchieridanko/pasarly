@@ -491,6 +491,206 @@ func (x *GetAllUserAddressesResponse) GetAddresses() []*UserAddress {
 	return nil
 }
 
+type UpdateUserAddressRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AuthId        int64                  `protobuf:"varint,1,opt,name=auth_id,json=authId,proto3" json:"auth_id,omitempty"`
+	AddressId     int64                  `protobuf:"varint,2,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
+	Recipient     *wrappers.StringValue  `protobuf:"bytes,3,opt,name=recipient,proto3" json:"recipient,omitempty"`
+	Phone         *wrappers.StringValue  `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
+	Label         *wrappers.StringValue  `protobuf:"bytes,5,opt,name=label,proto3" json:"label,omitempty"`
+	Notes         *wrappers.StringValue  `protobuf:"bytes,6,opt,name=notes,proto3" json:"notes,omitempty"`
+	Country       *wrappers.StringValue  `protobuf:"bytes,7,opt,name=country,proto3" json:"country,omitempty"`
+	Subdivision_1 *wrappers.StringValue  `protobuf:"bytes,8,opt,name=subdivision_1,json=subdivision1,proto3" json:"subdivision_1,omitempty"`
+	Subdivision_2 *wrappers.StringValue  `protobuf:"bytes,9,opt,name=subdivision_2,json=subdivision2,proto3" json:"subdivision_2,omitempty"`
+	Subdivision_3 *wrappers.StringValue  `protobuf:"bytes,10,opt,name=subdivision_3,json=subdivision3,proto3" json:"subdivision_3,omitempty"`
+	Subdivision_4 *wrappers.StringValue  `protobuf:"bytes,11,opt,name=subdivision_4,json=subdivision4,proto3" json:"subdivision_4,omitempty"`
+	Street        *wrappers.StringValue  `protobuf:"bytes,12,opt,name=street,proto3" json:"street,omitempty"`
+	Postcode      *wrappers.StringValue  `protobuf:"bytes,13,opt,name=postcode,proto3" json:"postcode,omitempty"`
+	Latitude      *wrappers.DoubleValue  `protobuf:"bytes,14,opt,name=latitude,proto3" json:"latitude,omitempty"`
+	Longitude     *wrappers.DoubleValue  `protobuf:"bytes,15,opt,name=longitude,proto3" json:"longitude,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserAddressRequest) Reset() {
+	*x = UpdateUserAddressRequest{}
+	mi := &file_v1_user_address_api_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserAddressRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserAddressRequest) ProtoMessage() {}
+
+func (x *UpdateUserAddressRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_user_address_api_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserAddressRequest.ProtoReflect.Descriptor instead.
+func (*UpdateUserAddressRequest) Descriptor() ([]byte, []int) {
+	return file_v1_user_address_api_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *UpdateUserAddressRequest) GetAuthId() int64 {
+	if x != nil {
+		return x.AuthId
+	}
+	return 0
+}
+
+func (x *UpdateUserAddressRequest) GetAddressId() int64 {
+	if x != nil {
+		return x.AddressId
+	}
+	return 0
+}
+
+func (x *UpdateUserAddressRequest) GetRecipient() *wrappers.StringValue {
+	if x != nil {
+		return x.Recipient
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetPhone() *wrappers.StringValue {
+	if x != nil {
+		return x.Phone
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetLabel() *wrappers.StringValue {
+	if x != nil {
+		return x.Label
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetNotes() *wrappers.StringValue {
+	if x != nil {
+		return x.Notes
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetCountry() *wrappers.StringValue {
+	if x != nil {
+		return x.Country
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetSubdivision_1() *wrappers.StringValue {
+	if x != nil {
+		return x.Subdivision_1
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetSubdivision_2() *wrappers.StringValue {
+	if x != nil {
+		return x.Subdivision_2
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetSubdivision_3() *wrappers.StringValue {
+	if x != nil {
+		return x.Subdivision_3
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetSubdivision_4() *wrappers.StringValue {
+	if x != nil {
+		return x.Subdivision_4
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetStreet() *wrappers.StringValue {
+	if x != nil {
+		return x.Street
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetPostcode() *wrappers.StringValue {
+	if x != nil {
+		return x.Postcode
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetLatitude() *wrappers.DoubleValue {
+	if x != nil {
+		return x.Latitude
+	}
+	return nil
+}
+
+func (x *UpdateUserAddressRequest) GetLongitude() *wrappers.DoubleValue {
+	if x != nil {
+		return x.Longitude
+	}
+	return nil
+}
+
+type UpdateUserAddressResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Address       *UserAddress           `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserAddressResponse) Reset() {
+	*x = UpdateUserAddressResponse{}
+	mi := &file_v1_user_address_api_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserAddressResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserAddressResponse) ProtoMessage() {}
+
+func (x *UpdateUserAddressResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_user_address_api_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserAddressResponse.ProtoReflect.Descriptor instead.
+func (*UpdateUserAddressResponse) Descriptor() ([]byte, []int) {
+	return file_v1_user_address_api_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *UpdateUserAddressResponse) GetAddress() *UserAddress {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
 var File_v1_user_address_api_proto protoreflect.FileDescriptor
 
 const file_v1_user_address_api_proto_rawDesc = "" +
@@ -542,10 +742,31 @@ const file_v1_user_address_api_proto_rawDesc = "" +
 	"\x1aGetAllUserAddressesRequest\x12\x17\n" +
 	"\aauth_id\x18\x01 \x01(\x03R\x06authId\"Q\n" +
 	"\x1bGetAllUserAddressesResponse\x122\n" +
-	"\taddresses\x18\x01 \x03(\v2\x14.user.v1.UserAddressR\taddresses2\xca\x01\n" +
+	"\taddresses\x18\x01 \x03(\v2\x14.user.v1.UserAddressR\taddresses\"\xd4\x06\n" +
+	"\x18UpdateUserAddressRequest\x12\x17\n" +
+	"\aauth_id\x18\x01 \x01(\x03R\x06authId\x12\x1d\n" +
+	"\n" +
+	"address_id\x18\x02 \x01(\x03R\taddressId\x12:\n" +
+	"\trecipient\x18\x03 \x01(\v2\x1c.google.protobuf.StringValueR\trecipient\x122\n" +
+	"\x05phone\x18\x04 \x01(\v2\x1c.google.protobuf.StringValueR\x05phone\x122\n" +
+	"\x05label\x18\x05 \x01(\v2\x1c.google.protobuf.StringValueR\x05label\x122\n" +
+	"\x05notes\x18\x06 \x01(\v2\x1c.google.protobuf.StringValueR\x05notes\x126\n" +
+	"\acountry\x18\a \x01(\v2\x1c.google.protobuf.StringValueR\acountry\x12A\n" +
+	"\rsubdivision_1\x18\b \x01(\v2\x1c.google.protobuf.StringValueR\fsubdivision1\x12A\n" +
+	"\rsubdivision_2\x18\t \x01(\v2\x1c.google.protobuf.StringValueR\fsubdivision2\x12A\n" +
+	"\rsubdivision_3\x18\n" +
+	" \x01(\v2\x1c.google.protobuf.StringValueR\fsubdivision3\x12A\n" +
+	"\rsubdivision_4\x18\v \x01(\v2\x1c.google.protobuf.StringValueR\fsubdivision4\x124\n" +
+	"\x06street\x18\f \x01(\v2\x1c.google.protobuf.StringValueR\x06street\x128\n" +
+	"\bpostcode\x18\r \x01(\v2\x1c.google.protobuf.StringValueR\bpostcode\x128\n" +
+	"\blatitude\x18\x0e \x01(\v2\x1c.google.protobuf.DoubleValueR\blatitude\x12:\n" +
+	"\tlongitude\x18\x0f \x01(\v2\x1c.google.protobuf.DoubleValueR\tlongitude\"K\n" +
+	"\x19UpdateUserAddressResponse\x12.\n" +
+	"\aaddress\x18\x01 \x01(\v2\x14.user.v1.UserAddressR\aaddress2\xa2\x02\n" +
 	"\x12UserAddressService\x12V\n" +
 	"\rCreateAddress\x12!.user.v1.CreateUserAddressRequest\x1a\".user.v1.CreateUserAddressResponse\x12\\\n" +
-	"\x0fGetAllAddresses\x12#.user.v1.GetAllUserAddressesRequest\x1a$.user.v1.GetAllUserAddressesResponseB?Z=github.com/ritchieridanko/pasarly/backend/shared/apis/v1;apisb\x06proto3"
+	"\x0fGetAllAddresses\x12#.user.v1.GetAllUserAddressesRequest\x1a$.user.v1.GetAllUserAddressesResponse\x12V\n" +
+	"\rUpdateAddress\x12!.user.v1.UpdateUserAddressRequest\x1a\".user.v1.UpdateUserAddressResponseB?Z=github.com/ritchieridanko/pasarly/backend/shared/apis/v1;apisb\x06proto3"
 
 var (
 	file_v1_user_address_api_proto_rawDescOnce sync.Once
@@ -559,41 +780,60 @@ func file_v1_user_address_api_proto_rawDescGZIP() []byte {
 	return file_v1_user_address_api_proto_rawDescData
 }
 
-var file_v1_user_address_api_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_v1_user_address_api_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_v1_user_address_api_proto_goTypes = []any{
 	(*UserAddress)(nil),                 // 0: user.v1.UserAddress
 	(*CreateUserAddressRequest)(nil),    // 1: user.v1.CreateUserAddressRequest
 	(*CreateUserAddressResponse)(nil),   // 2: user.v1.CreateUserAddressResponse
 	(*GetAllUserAddressesRequest)(nil),  // 3: user.v1.GetAllUserAddressesRequest
 	(*GetAllUserAddressesResponse)(nil), // 4: user.v1.GetAllUserAddressesResponse
-	(*wrappers.StringValue)(nil),        // 5: google.protobuf.StringValue
-	(*timestamp.Timestamp)(nil),         // 6: google.protobuf.Timestamp
+	(*UpdateUserAddressRequest)(nil),    // 5: user.v1.UpdateUserAddressRequest
+	(*UpdateUserAddressResponse)(nil),   // 6: user.v1.UpdateUserAddressResponse
+	(*wrappers.StringValue)(nil),        // 7: google.protobuf.StringValue
+	(*timestamp.Timestamp)(nil),         // 8: google.protobuf.Timestamp
+	(*wrappers.DoubleValue)(nil),        // 9: google.protobuf.DoubleValue
 }
 var file_v1_user_address_api_proto_depIdxs = []int32{
-	5,  // 0: user.v1.UserAddress.notes:type_name -> google.protobuf.StringValue
-	5,  // 1: user.v1.UserAddress.subdivision_1:type_name -> google.protobuf.StringValue
-	5,  // 2: user.v1.UserAddress.subdivision_2:type_name -> google.protobuf.StringValue
-	5,  // 3: user.v1.UserAddress.subdivision_3:type_name -> google.protobuf.StringValue
-	5,  // 4: user.v1.UserAddress.subdivision_4:type_name -> google.protobuf.StringValue
-	6,  // 5: user.v1.UserAddress.created_at:type_name -> google.protobuf.Timestamp
-	6,  // 6: user.v1.UserAddress.updated_at:type_name -> google.protobuf.Timestamp
-	5,  // 7: user.v1.CreateUserAddressRequest.notes:type_name -> google.protobuf.StringValue
-	5,  // 8: user.v1.CreateUserAddressRequest.subdivision_1:type_name -> google.protobuf.StringValue
-	5,  // 9: user.v1.CreateUserAddressRequest.subdivision_2:type_name -> google.protobuf.StringValue
-	5,  // 10: user.v1.CreateUserAddressRequest.subdivision_3:type_name -> google.protobuf.StringValue
-	5,  // 11: user.v1.CreateUserAddressRequest.subdivision_4:type_name -> google.protobuf.StringValue
+	7,  // 0: user.v1.UserAddress.notes:type_name -> google.protobuf.StringValue
+	7,  // 1: user.v1.UserAddress.subdivision_1:type_name -> google.protobuf.StringValue
+	7,  // 2: user.v1.UserAddress.subdivision_2:type_name -> google.protobuf.StringValue
+	7,  // 3: user.v1.UserAddress.subdivision_3:type_name -> google.protobuf.StringValue
+	7,  // 4: user.v1.UserAddress.subdivision_4:type_name -> google.protobuf.StringValue
+	8,  // 5: user.v1.UserAddress.created_at:type_name -> google.protobuf.Timestamp
+	8,  // 6: user.v1.UserAddress.updated_at:type_name -> google.protobuf.Timestamp
+	7,  // 7: user.v1.CreateUserAddressRequest.notes:type_name -> google.protobuf.StringValue
+	7,  // 8: user.v1.CreateUserAddressRequest.subdivision_1:type_name -> google.protobuf.StringValue
+	7,  // 9: user.v1.CreateUserAddressRequest.subdivision_2:type_name -> google.protobuf.StringValue
+	7,  // 10: user.v1.CreateUserAddressRequest.subdivision_3:type_name -> google.protobuf.StringValue
+	7,  // 11: user.v1.CreateUserAddressRequest.subdivision_4:type_name -> google.protobuf.StringValue
 	0,  // 12: user.v1.CreateUserAddressResponse.address:type_name -> user.v1.UserAddress
 	0,  // 13: user.v1.CreateUserAddressResponse.old_primary_address:type_name -> user.v1.UserAddress
 	0,  // 14: user.v1.GetAllUserAddressesResponse.addresses:type_name -> user.v1.UserAddress
-	1,  // 15: user.v1.UserAddressService.CreateAddress:input_type -> user.v1.CreateUserAddressRequest
-	3,  // 16: user.v1.UserAddressService.GetAllAddresses:input_type -> user.v1.GetAllUserAddressesRequest
-	2,  // 17: user.v1.UserAddressService.CreateAddress:output_type -> user.v1.CreateUserAddressResponse
-	4,  // 18: user.v1.UserAddressService.GetAllAddresses:output_type -> user.v1.GetAllUserAddressesResponse
-	17, // [17:19] is the sub-list for method output_type
-	15, // [15:17] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	7,  // 15: user.v1.UpdateUserAddressRequest.recipient:type_name -> google.protobuf.StringValue
+	7,  // 16: user.v1.UpdateUserAddressRequest.phone:type_name -> google.protobuf.StringValue
+	7,  // 17: user.v1.UpdateUserAddressRequest.label:type_name -> google.protobuf.StringValue
+	7,  // 18: user.v1.UpdateUserAddressRequest.notes:type_name -> google.protobuf.StringValue
+	7,  // 19: user.v1.UpdateUserAddressRequest.country:type_name -> google.protobuf.StringValue
+	7,  // 20: user.v1.UpdateUserAddressRequest.subdivision_1:type_name -> google.protobuf.StringValue
+	7,  // 21: user.v1.UpdateUserAddressRequest.subdivision_2:type_name -> google.protobuf.StringValue
+	7,  // 22: user.v1.UpdateUserAddressRequest.subdivision_3:type_name -> google.protobuf.StringValue
+	7,  // 23: user.v1.UpdateUserAddressRequest.subdivision_4:type_name -> google.protobuf.StringValue
+	7,  // 24: user.v1.UpdateUserAddressRequest.street:type_name -> google.protobuf.StringValue
+	7,  // 25: user.v1.UpdateUserAddressRequest.postcode:type_name -> google.protobuf.StringValue
+	9,  // 26: user.v1.UpdateUserAddressRequest.latitude:type_name -> google.protobuf.DoubleValue
+	9,  // 27: user.v1.UpdateUserAddressRequest.longitude:type_name -> google.protobuf.DoubleValue
+	0,  // 28: user.v1.UpdateUserAddressResponse.address:type_name -> user.v1.UserAddress
+	1,  // 29: user.v1.UserAddressService.CreateAddress:input_type -> user.v1.CreateUserAddressRequest
+	3,  // 30: user.v1.UserAddressService.GetAllAddresses:input_type -> user.v1.GetAllUserAddressesRequest
+	5,  // 31: user.v1.UserAddressService.UpdateAddress:input_type -> user.v1.UpdateUserAddressRequest
+	2,  // 32: user.v1.UserAddressService.CreateAddress:output_type -> user.v1.CreateUserAddressResponse
+	4,  // 33: user.v1.UserAddressService.GetAllAddresses:output_type -> user.v1.GetAllUserAddressesResponse
+	6,  // 34: user.v1.UserAddressService.UpdateAddress:output_type -> user.v1.UpdateUserAddressResponse
+	32, // [32:35] is the sub-list for method output_type
+	29, // [29:32] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_v1_user_address_api_proto_init() }
@@ -607,7 +847,7 @@ func file_v1_user_address_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_user_address_api_proto_rawDesc), len(file_v1_user_address_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
