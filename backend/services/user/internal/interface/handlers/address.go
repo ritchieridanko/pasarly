@@ -135,6 +135,29 @@ func (h *AddressHandler) SetPrimaryAddress(ctx context.Context, req *apis.SetPri
 	}, nil
 }
 
+func (h *AddressHandler) DeleteAddress(ctx context.Context, req *apis.DeleteAddressRequest) (*apis.DeleteAddressResponse, error) {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "DeleteAddress")
+	defer span.End()
+
+	data := models.DeleteAddress{
+		AuthID:    req.GetAuthId(),
+		AddressID: req.GetAddressId(),
+	}
+
+	npa, err := h.au.DeleteAddress(ctx, &data)
+	if err != nil {
+		h.logger.Sugar().Errorln(err.Error())
+		return nil, err.ToGRPCStatus()
+	}
+
+	var address *apis.UserAddress
+	if npa != nil {
+		address = h.toAddress(npa)
+	}
+
+	return &apis.DeleteAddressResponse{NewPrimaryAddress: address}, nil
+}
+
 func (h *AddressHandler) toAddress(a *models.Address) *apis.UserAddress {
 	address := apis.UserAddress{
 		Id:            a.ID,

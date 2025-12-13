@@ -62,3 +62,8 @@ type SetPrimaryAddress struct {
 	AuthID    int64
 	AddressID int64
 }
+
+type DeleteAddress struct {
+	AuthID    int64
+	AddressID int64
+}

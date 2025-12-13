@@ -795,6 +795,102 @@ func (x *SetPrimaryAddressResponse) GetOldPrimaryAddress() *UserAddress {
 	return nil
 }
 
+type DeleteAddressRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AuthId        int64                  `protobuf:"varint,1,opt,name=auth_id,json=authId,proto3" json:"auth_id,omitempty"`
+	AddressId     int64                  `protobuf:"varint,2,opt,name=address_id,json=addressId,proto3" json:"address_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAddressRequest) Reset() {
+	*x = DeleteAddressRequest{}
+	mi := &file_v1_user_address_api_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAddressRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAddressRequest) ProtoMessage() {}
+
+func (x *DeleteAddressRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_user_address_api_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAddressRequest.ProtoReflect.Descriptor instead.
+func (*DeleteAddressRequest) Descriptor() ([]byte, []int) {
+	return file_v1_user_address_api_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteAddressRequest) GetAuthId() int64 {
+	if x != nil {
+		return x.AuthId
+	}
+	return 0
+}
+
+func (x *DeleteAddressRequest) GetAddressId() int64 {
+	if x != nil {
+		return x.AddressId
+	}
+	return 0
+}
+
+type DeleteAddressResponse struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	NewPrimaryAddress *UserAddress           `protobuf:"bytes,1,opt,name=new_primary_address,json=newPrimaryAddress,proto3" json:"new_primary_address,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *DeleteAddressResponse) Reset() {
+	*x = DeleteAddressResponse{}
+	mi := &file_v1_user_address_api_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAddressResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAddressResponse) ProtoMessage() {}
+
+func (x *DeleteAddressResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_user_address_api_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAddressResponse.ProtoReflect.Descriptor instead.
+func (*DeleteAddressResponse) Descriptor() ([]byte, []int) {
+	return file_v1_user_address_api_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *DeleteAddressResponse) GetNewPrimaryAddress() *UserAddress {
+	if x != nil {
+		return x.NewPrimaryAddress
+	}
+	return nil
+}
+
 var File_v1_user_address_api_proto protoreflect.FileDescriptor
 
 const file_v1_user_address_api_proto_rawDesc = "" +
@@ -873,12 +969,19 @@ const file_v1_user_address_api_proto_rawDesc = "" +
 	"address_id\x18\x02 \x01(\x03R\taddressId\"\xa7\x01\n" +
 	"\x19SetPrimaryAddressResponse\x12D\n" +
 	"\x13new_primary_address\x18\x01 \x01(\v2\x14.user.v1.UserAddressR\x11newPrimaryAddress\x12D\n" +
-	"\x13old_primary_address\x18\x02 \x01(\v2\x14.user.v1.UserAddressR\x11oldPrimaryAddress2\xfe\x02\n" +
+	"\x13old_primary_address\x18\x02 \x01(\v2\x14.user.v1.UserAddressR\x11oldPrimaryAddress\"N\n" +
+	"\x14DeleteAddressRequest\x12\x17\n" +
+	"\aauth_id\x18\x01 \x01(\x03R\x06authId\x12\x1d\n" +
+	"\n" +
+	"address_id\x18\x02 \x01(\x03R\taddressId\"]\n" +
+	"\x15DeleteAddressResponse\x12D\n" +
+	"\x13new_primary_address\x18\x01 \x01(\v2\x14.user.v1.UserAddressR\x11newPrimaryAddress2\xce\x03\n" +
 	"\x12UserAddressService\x12V\n" +
 	"\rCreateAddress\x12!.user.v1.CreateUserAddressRequest\x1a\".user.v1.CreateUserAddressResponse\x12\\\n" +
 	"\x0fGetAllAddresses\x12#.user.v1.GetAllUserAddressesRequest\x1a$.user.v1.GetAllUserAddressesResponse\x12V\n" +
 	"\rUpdateAddress\x12!.user.v1.UpdateUserAddressRequest\x1a\".user.v1.UpdateUserAddressResponse\x12Z\n" +
-	"\x11SetPrimaryAddress\x12!.user.v1.SetPrimaryAddressRequest\x1a\".user.v1.SetPrimaryAddressResponseB?Z=github.com/ritchieridanko/pasarly/backend/shared/apis/v1;apisb\x06proto3"
+	"\x11SetPrimaryAddress\x12!.user.v1.SetPrimaryAddressRequest\x1a\".user.v1.SetPrimaryAddressResponse\x12N\n" +
+	"\rDeleteAddress\x12\x1d.user.v1.DeleteAddressRequest\x1a\x1e.user.v1.DeleteAddressResponseB?Z=github.com/ritchieridanko/pasarly/backend/shared/apis/v1;apisb\x06proto3"
 
 var (
 	file_v1_user_address_api_proto_rawDescOnce sync.Once
@@ -892,7 +995,7 @@ func file_v1_user_address_api_proto_rawDescGZIP() []byte {
 	return file_v1_user_address_api_proto_rawDescData
 }
 
-var file_v1_user_address_api_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_v1_user_address_api_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_v1_user_address_api_proto_goTypes = []any{
 	(*UserAddress)(nil),                 // 0: user.v1.UserAddress
 	(*CreateUserAddressRequest)(nil),    // 1: user.v1.CreateUserAddressRequest
@@ -903,55 +1006,60 @@ var file_v1_user_address_api_proto_goTypes = []any{
 	(*UpdateUserAddressResponse)(nil),   // 6: user.v1.UpdateUserAddressResponse
 	(*SetPrimaryAddressRequest)(nil),    // 7: user.v1.SetPrimaryAddressRequest
 	(*SetPrimaryAddressResponse)(nil),   // 8: user.v1.SetPrimaryAddressResponse
-	(*wrappers.StringValue)(nil),        // 9: google.protobuf.StringValue
-	(*timestamp.Timestamp)(nil),         // 10: google.protobuf.Timestamp
-	(*wrappers.DoubleValue)(nil),        // 11: google.protobuf.DoubleValue
+	(*DeleteAddressRequest)(nil),        // 9: user.v1.DeleteAddressRequest
+	(*DeleteAddressResponse)(nil),       // 10: user.v1.DeleteAddressResponse
+	(*wrappers.StringValue)(nil),        // 11: google.protobuf.StringValue
+	(*timestamp.Timestamp)(nil),         // 12: google.protobuf.Timestamp
+	(*wrappers.DoubleValue)(nil),        // 13: google.protobuf.DoubleValue
 }
 var file_v1_user_address_api_proto_depIdxs = []int32{
-	9,  // 0: user.v1.UserAddress.notes:type_name -> google.protobuf.StringValue
-	9,  // 1: user.v1.UserAddress.subdivision_1:type_name -> google.protobuf.StringValue
-	9,  // 2: user.v1.UserAddress.subdivision_2:type_name -> google.protobuf.StringValue
-	9,  // 3: user.v1.UserAddress.subdivision_3:type_name -> google.protobuf.StringValue
-	9,  // 4: user.v1.UserAddress.subdivision_4:type_name -> google.protobuf.StringValue
-	10, // 5: user.v1.UserAddress.created_at:type_name -> google.protobuf.Timestamp
-	10, // 6: user.v1.UserAddress.updated_at:type_name -> google.protobuf.Timestamp
-	9,  // 7: user.v1.CreateUserAddressRequest.notes:type_name -> google.protobuf.StringValue
-	9,  // 8: user.v1.CreateUserAddressRequest.subdivision_1:type_name -> google.protobuf.StringValue
-	9,  // 9: user.v1.CreateUserAddressRequest.subdivision_2:type_name -> google.protobuf.StringValue
-	9,  // 10: user.v1.CreateUserAddressRequest.subdivision_3:type_name -> google.protobuf.StringValue
-	9,  // 11: user.v1.CreateUserAddressRequest.subdivision_4:type_name -> google.protobuf.StringValue
+	11, // 0: user.v1.UserAddress.notes:type_name -> google.protobuf.StringValue
+	11, // 1: user.v1.UserAddress.subdivision_1:type_name -> google.protobuf.StringValue
+	11, // 2: user.v1.UserAddress.subdivision_2:type_name -> google.protobuf.StringValue
+	11, // 3: user.v1.UserAddress.subdivision_3:type_name -> google.protobuf.StringValue
+	11, // 4: user.v1.UserAddress.subdivision_4:type_name -> google.protobuf.StringValue
+	12, // 5: user.v1.UserAddress.created_at:type_name -> google.protobuf.Timestamp
+	12, // 6: user.v1.UserAddress.updated_at:type_name -> google.protobuf.Timestamp
+	11, // 7: user.v1.CreateUserAddressRequest.notes:type_name -> google.protobuf.StringValue
+	11, // 8: user.v1.CreateUserAddressRequest.subdivision_1:type_name -> google.protobuf.StringValue
+	11, // 9: user.v1.CreateUserAddressRequest.subdivision_2:type_name -> google.protobuf.StringValue
+	11, // 10: user.v1.CreateUserAddressRequest.subdivision_3:type_name -> google.protobuf.StringValue
+	11, // 11: user.v1.CreateUserAddressRequest.subdivision_4:type_name -> google.protobuf.StringValue
 	0,  // 12: user.v1.CreateUserAddressResponse.address:type_name -> user.v1.UserAddress
 	0,  // 13: user.v1.CreateUserAddressResponse.old_primary_address:type_name -> user.v1.UserAddress
 	0,  // 14: user.v1.GetAllUserAddressesResponse.addresses:type_name -> user.v1.UserAddress
-	9,  // 15: user.v1.UpdateUserAddressRequest.recipient:type_name -> google.protobuf.StringValue
-	9,  // 16: user.v1.UpdateUserAddressRequest.phone:type_name -> google.protobuf.StringValue
-	9,  // 17: user.v1.UpdateUserAddressRequest.label:type_name -> google.protobuf.StringValue
-	9,  // 18: user.v1.UpdateUserAddressRequest.notes:type_name -> google.protobuf.StringValue
-	9,  // 19: user.v1.UpdateUserAddressRequest.country:type_name -> google.protobuf.StringValue
-	9,  // 20: user.v1.UpdateUserAddressRequest.subdivision_1:type_name -> google.protobuf.StringValue
-	9,  // 21: user.v1.UpdateUserAddressRequest.subdivision_2:type_name -> google.protobuf.StringValue
-	9,  // 22: user.v1.UpdateUserAddressRequest.subdivision_3:type_name -> google.protobuf.StringValue
-	9,  // 23: user.v1.UpdateUserAddressRequest.subdivision_4:type_name -> google.protobuf.StringValue
-	9,  // 24: user.v1.UpdateUserAddressRequest.street:type_name -> google.protobuf.StringValue
-	9,  // 25: user.v1.UpdateUserAddressRequest.postcode:type_name -> google.protobuf.StringValue
-	11, // 26: user.v1.UpdateUserAddressRequest.latitude:type_name -> google.protobuf.DoubleValue
-	11, // 27: user.v1.UpdateUserAddressRequest.longitude:type_name -> google.protobuf.DoubleValue
+	11, // 15: user.v1.UpdateUserAddressRequest.recipient:type_name -> google.protobuf.StringValue
+	11, // 16: user.v1.UpdateUserAddressRequest.phone:type_name -> google.protobuf.StringValue
+	11, // 17: user.v1.UpdateUserAddressRequest.label:type_name -> google.protobuf.StringValue
+	11, // 18: user.v1.UpdateUserAddressRequest.notes:type_name -> google.protobuf.StringValue
+	11, // 19: user.v1.UpdateUserAddressRequest.country:type_name -> google.protobuf.StringValue
+	11, // 20: user.v1.UpdateUserAddressRequest.subdivision_1:type_name -> google.protobuf.StringValue
+	11, // 21: user.v1.UpdateUserAddressRequest.subdivision_2:type_name -> google.protobuf.StringValue
+	11, // 22: user.v1.UpdateUserAddressRequest.subdivision_3:type_name -> google.protobuf.StringValue
+	11, // 23: user.v1.UpdateUserAddressRequest.subdivision_4:type_name -> google.protobuf.StringValue
+	11, // 24: user.v1.UpdateUserAddressRequest.street:type_name -> google.protobuf.StringValue
+	11, // 25: user.v1.UpdateUserAddressRequest.postcode:type_name -> google.protobuf.StringValue
+	13, // 26: user.v1.UpdateUserAddressRequest.latitude:type_name -> google.protobuf.DoubleValue
+	13, // 27: user.v1.UpdateUserAddressRequest.longitude:type_name -> google.protobuf.DoubleValue
 	0,  // 28: user.v1.UpdateUserAddressResponse.address:type_name -> user.v1.UserAddress
 	0,  // 29: user.v1.SetPrimaryAddressResponse.new_primary_address:type_name -> user.v1.UserAddress
 	0,  // 30: user.v1.SetPrimaryAddressResponse.old_primary_address:type_name -> user.v1.UserAddress
-	1,  // 31: user.v1.UserAddressService.CreateAddress:input_type -> user.v1.CreateUserAddressRequest
-	3,  // 32: user.v1.UserAddressService.GetAllAddresses:input_type -> user.v1.GetAllUserAddressesRequest
-	5,  // 33: user.v1.UserAddressService.UpdateAddress:input_type -> user.v1.UpdateUserAddressRequest
-	7,  // 34: user.v1.UserAddressService.SetPrimaryAddress:input_type -> user.v1.SetPrimaryAddressRequest
-	2,  // 35: user.v1.UserAddressService.CreateAddress:output_type -> user.v1.CreateUserAddressResponse
-	4,  // 36: user.v1.UserAddressService.GetAllAddresses:output_type -> user.v1.GetAllUserAddressesResponse
-	6,  // 37: user.v1.UserAddressService.UpdateAddress:output_type -> user.v1.UpdateUserAddressResponse
-	8,  // 38: user.v1.UserAddressService.SetPrimaryAddress:output_type -> user.v1.SetPrimaryAddressResponse
-	35, // [35:39] is the sub-list for method output_type
-	31, // [31:35] is the sub-list for method input_type
-	31, // [31:31] is the sub-list for extension type_name
-	31, // [31:31] is the sub-list for extension extendee
-	0,  // [0:31] is the sub-list for field type_name
+	0,  // 31: user.v1.DeleteAddressResponse.new_primary_address:type_name -> user.v1.UserAddress
+	1,  // 32: user.v1.UserAddressService.CreateAddress:input_type -> user.v1.CreateUserAddressRequest
+	3,  // 33: user.v1.UserAddressService.GetAllAddresses:input_type -> user.v1.GetAllUserAddressesRequest
+	5,  // 34: user.v1.UserAddressService.UpdateAddress:input_type -> user.v1.UpdateUserAddressRequest
+	7,  // 35: user.v1.UserAddressService.SetPrimaryAddress:input_type -> user.v1.SetPrimaryAddressRequest
+	9,  // 36: user.v1.UserAddressService.DeleteAddress:input_type -> user.v1.DeleteAddressRequest
+	2,  // 37: user.v1.UserAddressService.CreateAddress:output_type -> user.v1.CreateUserAddressResponse
+	4,  // 38: user.v1.UserAddressService.GetAllAddresses:output_type -> user.v1.GetAllUserAddressesResponse
+	6,  // 39: user.v1.UserAddressService.UpdateAddress:output_type -> user.v1.UpdateUserAddressResponse
+	8,  // 40: user.v1.UserAddressService.SetPrimaryAddress:output_type -> user.v1.SetPrimaryAddressResponse
+	10, // 41: user.v1.UserAddressService.DeleteAddress:output_type -> user.v1.DeleteAddressResponse
+	37, // [37:42] is the sub-list for method output_type
+	32, // [32:37] is the sub-list for method input_type
+	32, // [32:32] is the sub-list for extension type_name
+	32, // [32:32] is the sub-list for extension extendee
+	0,  // [0:32] is the sub-list for field type_name
 }
 
 func init() { file_v1_user_address_api_proto_init() }
@@ -965,7 +1073,7 @@ func file_v1_user_address_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_user_address_api_proto_rawDesc), len(file_v1_user_address_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

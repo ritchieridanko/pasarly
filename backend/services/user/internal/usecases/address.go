@@ -20,6 +20,7 @@ type AddressUsecase interface {
 	GetAllAddresses(ctx context.Context, authID int64) (addresses []models.Address, err *ce.Error)
 	UpdateAddress(ctx context.Context, data *models.UpdateAddress) (address *models.Address, err *ce.Error)
 	SetPrimaryAddress(ctx context.Context, data *models.SetPrimaryAddress) (newPrimaryAddress *models.Address, oldPrimaryAddress *models.Address, err *ce.Error)
+	DeleteAddress(ctx context.Context, data *models.DeleteAddress) (newPrimaryAddress *models.Address, err *ce.Error)
 }
 
 type addressUsecase struct {
@@ -197,4 +198,28 @@ func (u *addressUsecase) SetPrimaryAddress(ctx context.Context, data *models.Set
 	})
 
 	return newPrimaryAddress, oldPrimaryAddress, err
+}
+
+func (u *addressUsecase) DeleteAddress(ctx context.Context, data *models.DeleteAddress) (*models.Address, *ce.Error) {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "DeleteAddress")
+	defer span.End()
+
+	var newPrimaryAddress *models.Address
+	err := u.transactor.WithTx(ctx, func(ctx context.Context) *ce.Error {
+		if err := u.ar.DeleteAddress(ctx, data); err != nil {
+			return err
+		}
+
+		exists, err := u.ar.HasPrimary(ctx, data.AuthID)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			newPrimaryAddress, err = u.ar.SetLastUpdatedPrimary(ctx, data.AuthID)
+		}
+
+		return err
+	})
+
+	return newPrimaryAddress, err
 }

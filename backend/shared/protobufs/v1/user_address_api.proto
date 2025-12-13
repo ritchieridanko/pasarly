@@ -90,9 +90,19 @@ message SetPrimaryAddressResponse {
   UserAddress old_primary_address = 2;
 }
 
+message DeleteAddressRequest {
+  int64 auth_id = 1;
+  int64 address_id = 2;
+}
+
+message DeleteAddressResponse {
+  UserAddress new_primary_address = 1;
+}
+
 service UserAddressService {
   rpc CreateAddress (CreateUserAddressRequest) returns (CreateUserAddressResponse);
   rpc GetAllAddresses (GetAllUserAddressesRequest) returns (GetAllUserAddressesResponse);
   rpc UpdateAddress (UpdateUserAddressRequest) returns (UpdateUserAddressResponse);
   rpc SetPrimaryAddress (SetPrimaryAddressRequest) returns (SetPrimaryAddressResponse);
+  rpc DeleteAddress (DeleteAddressRequest) returns (DeleteAddressResponse);
 }

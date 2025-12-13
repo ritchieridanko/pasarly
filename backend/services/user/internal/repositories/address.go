@@ -18,9 +18,11 @@ type AddressRepository interface {
 	CreateAddress(ctx context.Context, data *models.CreateAddress) (address *models.Address, err *ce.Error)
 	GetAllAddresses(ctx context.Context, authID int64) (addresses []models.Address, err *ce.Error)
 	UpdateAddress(ctx context.Context, data *models.UpdateAddress) (address *models.Address, err *ce.Error)
+	DeleteAddress(ctx context.Context, data *models.DeleteAddress) (err *ce.Error)
 	HasPrimary(ctx context.Context, authID int64) (exists bool, err *ce.Error)
 	SetPrimary(ctx context.Context, data *models.SetPrimaryAddress) (address *models.Address, err *ce.Error)
 	UnsetPrimary(ctx context.Context, authID int64) (address *models.Address, err *ce.Error)
+	SetLastUpdatedPrimary(ctx context.Context, authID int64) (address *models.Address, err *ce.Error)
 }
 
 type addressRepository struct {
@@ -238,6 +240,24 @@ func (r *addressRepository) UpdateAddress(ctx context.Context, data *models.Upda
 	return &address, nil
 }
 
+func (r *addressRepository) DeleteAddress(ctx context.Context, data *models.DeleteAddress) *ce.Error {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "DeleteAddress")
+	defer span.End()
+
+	query := "DELETE FROM addresses WHERE address_id = $1 AND auth_id = $2"
+
+	if err := r.database.Execute(ctx, query, data.AddressID, data.AuthID); err != nil {
+		e := fmt.Errorf("failed to delete address: %w", err)
+		if errors.Is(err, ce.ErrDBAffectNoRows) {
+			return ce.NewError(span, ce.CodeAddressNotFound, ce.MsgAddressNotFound, e)
+		}
+
+		return ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+
+	return nil
+}
+
 func (r *addressRepository) HasPrimary(ctx context.Context, authID int64) (bool, *ce.Error) {
 	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "HasPrimary")
 	defer span.End()
@@ -322,6 +342,44 @@ func (r *addressRepository) UnsetPrimary(ctx context.Context, authID int64) (*mo
 	)
 	if err != nil {
 		e := fmt.Errorf("failed to unset primary address: %w", err)
+		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
+	}
+
+	return &address, nil
+}
+
+func (r *addressRepository) SetLastUpdatedPrimary(ctx context.Context, authID int64) (*models.Address, *ce.Error) {
+	ctx, span := otel.Tracer(addressErrTracer).Start(ctx, "SetLastUpdatedPrimary")
+	defer span.End()
+
+	query := `
+		UPDATE addresses
+		SET is_primary = TRUE, updated_at = NOW()
+		WHERE address_id = (
+			SELECT address_id FROM addresses WHERE auth_id = $1
+			ORDER BY updated_at DESC LIMIT 1
+		)
+		RETURNING
+			address_id, recipient, phone, label, notes, is_primary, country,
+			subdivision_1, subdivision_2, subdivision_3, subdivision_4,
+			street, postcode, latitude, longitude, created_at, updated_at
+	`
+
+	row := r.database.QueryRow(ctx, query, authID)
+
+	var address models.Address
+	err := row.Scan(
+		&address.ID, &address.Recipient, &address.Phone, &address.Label, &address.Notes,
+		&address.IsPrimary, &address.Country, &address.Subdivision1, &address.Subdivision2,
+		&address.Subdivision3, &address.Subdivision4, &address.Street, &address.Postcode,
+		&address.Latitude, &address.Longitude, &address.CreatedAt, &address.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, ce.ErrDBReturnNoRows) {
+			return nil, nil
+		}
+
+		e := fmt.Errorf("failed to set last updated primary: %w", err)
 		return nil, ce.NewError(span, ce.CodeDBQueryExec, ce.MsgInternalServer, e)
 	}
 

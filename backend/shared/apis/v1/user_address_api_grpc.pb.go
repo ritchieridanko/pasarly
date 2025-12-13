@@ -23,6 +23,7 @@ const (
 	UserAddressService_GetAllAddresses_FullMethodName   = "/user.v1.UserAddressService/GetAllAddresses"
 	UserAddressService_UpdateAddress_FullMethodName     = "/user.v1.UserAddressService/UpdateAddress"
 	UserAddressService_SetPrimaryAddress_FullMethodName = "/user.v1.UserAddressService/SetPrimaryAddress"
+	UserAddressService_DeleteAddress_FullMethodName     = "/user.v1.UserAddressService/DeleteAddress"
 )
 
 // UserAddressServiceClient is the client API for UserAddressService service.
@@ -33,6 +34,7 @@ type UserAddressServiceClient interface {
 	GetAllAddresses(ctx context.Context, in *GetAllUserAddressesRequest, opts ...grpc.CallOption) (*GetAllUserAddressesResponse, error)
 	UpdateAddress(ctx context.Context, in *UpdateUserAddressRequest, opts ...grpc.CallOption) (*UpdateUserAddressResponse, error)
 	SetPrimaryAddress(ctx context.Context, in *SetPrimaryAddressRequest, opts ...grpc.CallOption) (*SetPrimaryAddressResponse, error)
+	DeleteAddress(ctx context.Context, in *DeleteAddressRequest, opts ...grpc.CallOption) (*DeleteAddressResponse, error)
 }
 
 type userAddressServiceClient struct {
@@ -83,6 +85,16 @@ func (c *userAddressServiceClient) SetPrimaryAddress(ctx context.Context, in *Se
 	return out, nil
 }
 
+func (c *userAddressServiceClient) DeleteAddress(ctx context.Context, in *DeleteAddressRequest, opts ...grpc.CallOption) (*DeleteAddressResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteAddressResponse)
+	err := c.cc.Invoke(ctx, UserAddressService_DeleteAddress_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserAddressServiceServer is the server API for UserAddressService service.
 // All implementations must embed UnimplementedUserAddressServiceServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type UserAddressServiceServer interface {
 	GetAllAddresses(context.Context, *GetAllUserAddressesRequest) (*GetAllUserAddressesResponse, error)
 	UpdateAddress(context.Context, *UpdateUserAddressRequest) (*UpdateUserAddressResponse, error)
 	SetPrimaryAddress(context.Context, *SetPrimaryAddressRequest) (*SetPrimaryAddressResponse, error)
+	DeleteAddress(context.Context, *DeleteAddressRequest) (*DeleteAddressResponse, error)
 	mustEmbedUnimplementedUserAddressServiceServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedUserAddressServiceServer) UpdateAddress(context.Context, *Upd
 }
 func (UnimplementedUserAddressServiceServer) SetPrimaryAddress(context.Context, *SetPrimaryAddressRequest) (*SetPrimaryAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetPrimaryAddress not implemented")
+}
+func (UnimplementedUserAddressServiceServer) DeleteAddress(context.Context, *DeleteAddressRequest) (*DeleteAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAddress not implemented")
 }
 func (UnimplementedUserAddressServiceServer) mustEmbedUnimplementedUserAddressServiceServer() {}
 func (UnimplementedUserAddressServiceServer) testEmbeddedByValue()                            {}
@@ -206,6 +222,24 @@ func _UserAddressService_SetPrimaryAddress_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserAddressService_DeleteAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserAddressServiceServer).DeleteAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserAddressService_DeleteAddress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserAddressServiceServer).DeleteAddress(ctx, req.(*DeleteAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserAddressService_ServiceDesc is the grpc.ServiceDesc for UserAddressService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var UserAddressService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetPrimaryAddress",
 			Handler:    _UserAddressService_SetPrimaryAddress_Handler,
+		},
+		{
+			MethodName: "DeleteAddress",
+			Handler:    _UserAddressService_DeleteAddress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
